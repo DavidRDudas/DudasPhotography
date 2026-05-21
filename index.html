@@ -1,0 +1,1200 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+<title>Dudas — Photographs</title>
+<meta name="description" content="Photographs by David Dudas. Landscapes, wildlife, architecture. Selected works." />
+<meta name="theme-color" content="#0a0a0a" />
+<link rel="icon" type="image/png" href="apple-touch-icon.png" />
+<link rel="apple-touch-icon" href="apple-touch-icon.png" />
+<link rel="shortcut icon" href="apple-touch-icon.png" />
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=Fraunces:opsz,wght,SOFT@9..144,300..900,30..100&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet">
+<style>
+  /* ───────── Root ───────── */
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+  :root {
+    --bg: #0a0a0a;
+    --bg-soft: #131313;
+    --paper: #f5f1ea;
+    --ink: #e8e4dc;
+    --ink-dim: #7a7670;
+    --ink-faint: #2a2724;
+    --rule: #25221f;
+    --accent: #ff5d3b;
+    --display: "Fraunces", "Times New Roman", serif;
+    --sans: "Inter", system-ui, -apple-system, sans-serif;
+    --vh: 1vh;
+    --pad-x: clamp(20px, 5vw, 80px);
+    --gap: clamp(20px, 3vw, 56px);
+  }
+  html { -webkit-font-smoothing: antialiased; -moz-osx-font-smoothing: grayscale; scroll-behavior: smooth; scrollbar-gutter: stable; }
+  html, body { background: var(--bg); color: var(--ink); }
+  body {
+    font-family: var(--sans); font-weight: 300; line-height: 1.55;
+    overflow-x: hidden; cursor: none;
+    font-feature-settings: "kern", "liga", "calt", "ss01";
+  }
+  @media (hover: none), (max-width: 760px) { body { cursor: auto; } }
+  img { display: block; max-width: 100%; }
+  a, button { color: inherit; text-decoration: none; background: none; border: 0; font: inherit; }
+  ::selection { background: var(--accent); color: var(--bg); }
+
+  /* Hairlines + universal display heading defaults */
+  .h-display { font-family: var(--display); font-variation-settings: "wght" 700, "opsz" 144; }
+
+  /* Film grain overlay */
+  .grain {
+    position: fixed; inset: -50%; z-index: 200; pointer-events: none;
+    opacity: .06; mix-blend-mode: overlay;
+    background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='240' height='240'><filter id='n'><feTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='2' stitchTiles='stitch'/><feColorMatrix values='0 0 0 0 0.95 0 0 0 0 0.91 0 0 0 0 0.82 0 0 0 0.7 0'/></filter><rect width='100%25' height='100%25' filter='url(%23n)'/></svg>");
+    animation: grain 8s steps(6) infinite;
+  }
+  @keyframes grain {
+    0% { transform: translate(0,0); } 20% { transform: translate(-3%,2%); }
+    40% { transform: translate(2%,-4%); } 60% { transform: translate(-2%,3%); }
+    80% { transform: translate(3%,-2%); } 100% { transform: translate(0,0); }
+  }
+  .vignette {
+    position: fixed; inset: 0; z-index: 199; pointer-events: none;
+    background: radial-gradient(125% 95% at 50% 50%, transparent 55%, rgba(0,0,0,.45) 100%);
+  }
+
+  /* ───────── Custom cursor ───────── */
+  .cursor, .cursor-dot {
+    position: fixed; top: 0; left: 0; pointer-events: none; z-index: 9999;
+    border-radius: 50%; transform: translate(-50%, -50%);
+    transition: width .35s cubic-bezier(.2,.7,.2,1), height .35s, background .35s, border-color .35s, opacity .3s;
+    will-change: transform;
+  }
+  .cursor { width: 24px; height: 24px; border: 1px solid var(--paper); mix-blend-mode: difference; }
+  .cursor-dot { width: 3px; height: 3px; background: var(--paper); mix-blend-mode: difference; }
+  .cursor.is-hover { width: 60px; height: 60px; background: rgba(255,255,255,.04); }
+  .cursor.is-hover-img { width: 132px; height: 132px; border-color: transparent; background: rgba(255,255,255,.07); backdrop-filter: blur(2px); }
+  .cursor.is-hover-img::after {
+    content: "OPEN"; font-family: var(--sans); font-weight: 500; font-size: 10px; letter-spacing: .38em;
+    color: var(--paper); position: absolute; inset: 0; display: grid; place-items: center; mix-blend-mode: difference;
+  }
+  .cursor.is-spotlight { opacity: 0; }
+  @media (hover: none), (max-width: 760px) { .cursor, .cursor-dot { display: none; } }
+
+  /* ───────── Loader ───────── */
+  .loader {
+    position: fixed; inset: 0; z-index: 1000; background: var(--bg);
+    display: grid; grid-template-rows: auto 1fr auto;
+    padding: 24px var(--pad-x);
+    transition: opacity .9s ease .6s, visibility .9s ease .6s;
+  }
+  body.is-loaded .loader { opacity: 0; visibility: hidden; }
+  body.loader-done .loader { display: none; }
+  .loader__l { display: grid; grid-template-columns: 1fr 1fr; align-items: center; gap: 12px;
+    font-size: 10.5px; letter-spacing: .3em; text-transform: uppercase; color: var(--ink-dim);
+  }
+  .loader__l .r { text-align: right; }
+  .loader__center { display: grid; place-items: center; }
+  /* Image-masked DUDAS in loader */
+  .mask-name {
+    font-family: var(--display);
+    font-variation-settings: "wght" 900, "opsz" 144, "SOFT" 0;
+    font-weight: 900; line-height: .82; letter-spacing: -.045em; text-transform: uppercase;
+    font-size: clamp(70px, 18vw, 280px);
+    background-image: url("photos/hillside-panorama.webp");
+    background-size: cover; background-position: center 35%;
+    -webkit-background-clip: text; background-clip: text;
+    color: transparent; -webkit-text-fill-color: transparent;
+    text-align: center;
+    filter: grayscale(1) contrast(1.05); /* match the B&W hero */
+    opacity: 0; transform: translateY(20px);
+    animation: maskIn 1.3s ease forwards .25s;
+  }
+  @keyframes maskIn { to { opacity: 1; transform: none; } }
+  .loader__bar { position: relative; height: 1px; background: var(--ink-faint); flex: 1; }
+  .loader__bar::after { content:""; position:absolute; left:0; top:0; height:100%; width:0%; background:var(--paper); animation: barFill 1.4s ease forwards; }
+  @keyframes barFill { to { width: 100%; } }
+  .loader__b { display: grid; grid-template-columns: auto 1fr auto; gap: 24px; align-items: center;
+    font-size: 10.5px; letter-spacing: .3em; text-transform: uppercase; color: var(--ink-dim);
+    font-variant-numeric: tabular-nums;
+  }
+  .loader__pct { color: var(--paper); }
+
+  /* ───────── Masthead ───────── */
+  .mast {
+    position: fixed; top: 0; left: 0; right: 0; z-index: 80;
+    display: grid; grid-template-columns: 1fr auto 1fr; align-items: center;
+    padding: 22px var(--pad-x);
+    mix-blend-mode: difference; color: #fff;
+    opacity: 0; transform: translateY(-12px);
+    transition: opacity 1.2s ease 1.2s, transform 1.2s ease 1.2s;
+  }
+  body.is-loaded .mast { opacity: 1; transform: none; }
+  .mast__l, .mast__r {
+    display: flex; gap: 22px; align-items: center;
+    font-size: 10.5px; letter-spacing: .3em; text-transform: uppercase;
+  }
+  .mast__r { justify-content: flex-end; }
+  .mast a { position: relative; padding: 4px 0; }
+  .mast a::after { content:""; position:absolute; left:0; bottom:0; height:1px; width:100%; background: currentColor; transform: scaleX(0); transform-origin: right; transition: transform .55s cubic-bezier(.2,.7,.2,1); }
+  .mast a:hover::after { transform: scaleX(1); transform-origin: left; }
+  .mast__brand { font-family: var(--display); font-variation-settings: "wght" 600, "opsz" 18; font-size: 16px; letter-spacing: -.005em; }
+  .mast__brand .a { color: var(--accent); }
+
+  /* ───────── HERO — full-bleed photo, slow zoom, title overlaid ───────── */
+  .hero {
+    position: relative; height: 100vh; height: calc(var(--vh) * 100);
+    overflow: hidden; display: grid; grid-template-rows: auto 1fr auto;
+    padding: 12vh var(--pad-x) 5vh;
+  }
+  .hero__media { position: absolute; inset: 0; z-index: 0; overflow: hidden; }
+  .hero__media img {
+    width: 100%; height: 100%; object-fit: cover;
+    transform: scale(1.18); opacity: 0;
+    animation: heroZoom 22s ease-out forwards;
+    transition: opacity 1.6s ease;
+    filter: grayscale(1) contrast(1.02); /* hero in black & white */
+  }
+  body.is-loaded .hero__media img { opacity: 1; }
+  @keyframes heroZoom { 0% { transform: scale(1.18); } 100% { transform: scale(1.04); } }
+  .hero__media::after {
+    content: ""; position: absolute; inset: 0; z-index: 1; pointer-events: none;
+    background:
+      linear-gradient(180deg, rgba(10,9,8,.55) 0%, rgba(10,9,8,.1) 28%, rgba(10,9,8,.05) 60%, rgba(10,9,8,.78) 100%),
+      radial-gradient(70% 60% at 50% 60%, transparent 0%, rgba(10,9,8,.35) 100%);
+  }
+  .hero__top, .hero__center, .hero__bot { position: relative; z-index: 2; }
+
+  .hero__top, .hero__bot {
+    display: grid; grid-template-columns: 1fr auto 1fr; align-items: start; gap: 24px;
+    font-size: 10.5px; letter-spacing: .3em; text-transform: uppercase;
+    color: rgba(245,241,234,.78);
+  }
+  .hero__top .c, .hero__bot .c { text-align: center; }
+  .hero__top .r, .hero__bot .r { text-align: right; }
+  .hero__top em { font-family: var(--display); font-style: normal; color: var(--paper); font-size: 13px; font-variation-settings: "wght" 600, "opsz" 14; text-transform: none; letter-spacing: 0; padding: 0 4px; }
+  .hero__top .dash { display: inline-block; width: 22px; height: 1px; background: currentColor; vertical-align: middle; margin: 0 8px; opacity: .6; }
+
+  .hero__center { display: grid; place-items: center; gap: 14px; padding: 2vh 0; text-align: center; }
+  .hero__kicker {
+    font-size: 11px; letter-spacing: .42em; text-transform: uppercase;
+    color: rgba(245,241,234,.82); margin-bottom: 4px;
+    opacity: 0; animation: fadeUp 1.2s ease forwards 1.0s;
+  }
+  .hero__title {
+    font-family: var(--display); font-variation-settings: "wght" 600, "opsz" 144;
+    font-weight: 600; line-height: .95; letter-spacing: -.025em;
+    font-size: clamp(48px, 10.5vw, 170px); color: var(--paper);
+    overflow: hidden;
+  }
+  .hero__title .l1, .hero__title .l2 { display: block; overflow: hidden; }
+  .hero__title .l1 span, .hero__title .l2 span {
+    display: block; transform: translateY(110%);
+    transition: transform 1.3s cubic-bezier(.2,.7,.2,1);
+  }
+  body.is-loaded .hero__title .l1 span { transform: translateY(0); transition-delay: .95s; }
+  body.is-loaded .hero__title .l2 span { transform: translateY(0); transition-delay: 1.15s; }
+  .hero__title em {
+    font-family: "DM Serif Display", "Didot", "Bodoni 72", "Times New Roman", serif;
+    font-style: italic; font-weight: 400; font-variation-settings: normal;
+    color: var(--accent);
+    letter-spacing: -.01em;
+    /* DM Serif Display has higher contrast than Fraunces — sits a touch larger optically */
+    font-size: 1.08em;
+  }
+  .hero__title .dot { color: var(--accent); }
+  .hero__sub {
+    margin-top: 18px;
+    font-family: var(--display); font-variation-settings: "wght" 400, "opsz" 36;
+    font-style: italic; font-size: clamp(18px, 2.3vw, 28px);
+    color: rgba(245,241,234,.9); max-width: 38ch; line-height: 1.45;
+    opacity: 0; animation: fadeUp 1.2s ease forwards 1.5s;
+  }
+  .hero__sub .a { color: var(--accent); font-style: normal; padding: 0 .2em; }
+  @keyframes fadeUp { to { opacity: 1; transform: none; } }
+
+  .hero__bot { opacity: 0; animation: fadeUp 1.2s ease forwards 1.7s; }
+  .hero__scroll { display: inline-flex; align-items: center; gap: 12px; color: var(--paper); }
+  .hero__scroll::after { content: ""; width: 28px; height: 1px; background: currentColor; transform-origin: left; animation: scrollHint 2.2s ease-in-out infinite; }
+  @keyframes scrollHint { 0%, 100% { transform: scaleX(.25); } 50% { transform: scaleX(1); } }
+
+  /* ───────── Marquee ───────── */
+  .marquee {
+    border-block: 1px solid var(--rule);
+    padding: 24px 0; overflow: hidden; white-space: nowrap;
+    font-family: var(--display); font-variation-settings: "wght" 500, "opsz" 144;
+    font-size: clamp(38px, 6.5vw, 100px); line-height: 1; letter-spacing: -.025em;
+    color: var(--paper); text-transform: uppercase;
+  }
+  .marquee__track { display: inline-block; padding-left: 100%; animation: marquee 50s linear infinite; }
+  .marquee span { padding: 0 .25em; }
+  .marquee .it { font-style: italic; font-variation-settings: "wght" 300, "opsz" 144; padding: 0 .35em; color: var(--accent); }
+  @keyframes marquee { to { transform: translateX(-100%); } }
+
+  /* ───────── Section head ───────── */
+  .sec { position: relative; padding: clamp(80px, 12vw, 160px) var(--pad-x) clamp(60px, 8vw, 120px); }
+  .sec__head {
+    display: grid; grid-template-columns: auto 1fr auto; align-items: end; gap: 32px;
+    margin-bottom: clamp(50px, 8vw, 100px); padding-bottom: 16px;
+    border-bottom: 1px solid var(--rule);
+  }
+  .sec__num {
+    font-family: var(--display); font-variation-settings: "wght" 700, "opsz" 144;
+    font-size: clamp(40px, 5vw, 72px); line-height: 1; color: var(--accent); letter-spacing: -.015em;
+  }
+  .sec__title {
+    font-family: var(--display); font-variation-settings: "wght" 500, "opsz" 144;
+    font-size: clamp(56px, 11vw, 180px); line-height: .9; letter-spacing: -.04em; text-transform: uppercase;
+    color: var(--paper);
+  }
+  .sec__title .it { font-style: italic; font-variation-settings: "wght" 300, "opsz" 144; text-transform: none; color: var(--accent); letter-spacing: -.01em; padding: 0 .1em; }
+  .sec__meta {
+    font-size: 10.5px; letter-spacing: .3em; text-transform: uppercase; color: var(--ink-dim);
+    text-align: right; line-height: 1.6; padding-bottom: 14px;
+  }
+  @media (max-width: 820px) {
+    .sec__head { grid-template-columns: 1fr; gap: 6px; }
+    .sec__meta { text-align: left; }
+  }
+
+  /* ───────── Plate / photo block ───────── */
+  .plate { position: relative; cursor: pointer; }
+  .plate__img { position: relative; overflow: hidden; background: var(--bg-soft); }
+  .plate__img img { width: 100%; height: 100%; object-fit: cover; transition: transform 1.8s cubic-bezier(.2,.7,.2,1), filter 1.6s; }
+  .plate:hover .plate__img img { transform: scale(1.04); }
+  .plate__cap {
+    margin-top: 12px;
+    display: grid; grid-template-columns: auto 1fr auto; gap: 18px; align-items: baseline;
+    font-size: 10.5px; letter-spacing: .26em; text-transform: uppercase; color: var(--ink-dim);
+    border-top: 1px solid var(--rule); padding-top: 12px;
+  }
+  .plate__num { font-family: var(--display); font-variation-settings: "wght" 700, "opsz" 36; font-style: normal; font-size: 14px; color: var(--accent); letter-spacing: -.01em; text-transform: none; }
+  .plate__title { font-family: var(--display); font-variation-settings: "wght" 500, "opsz" 24; font-style: italic; color: var(--paper); font-size: 14px; letter-spacing: 0; text-transform: none; line-height: 1.3; }
+  .plate__meta { font-variant-numeric: tabular-nums; text-align: right; min-width: 13ch; }
+
+  /* ───────── 01 LAND — asymmetric grid w/ diptych (V2 layout) ───────── */
+  .grid { display: grid; grid-template-columns: repeat(12, 1fr); gap: var(--gap); }
+  .land .p1 { grid-column: 1 / -1; } .land .p1 .plate__img { aspect-ratio: 21 / 9; }
+  .land .p2 { grid-column: 1 / span 5; margin-top: 5vw; } .land .p2 .plate__img { aspect-ratio: 4 / 5; }
+  .land .p3 { grid-column: 7 / span 6; } .land .p3 .plate__img { aspect-ratio: 3 / 4; }
+  .land .diptych { grid-column: 1 / -1; display: grid; grid-template-columns: 1fr 1fr; gap: var(--gap); margin-top: 3vw; }
+  .land .diptych .plate__img { aspect-ratio: 1 / 1; }
+  .land .p6 { grid-column: 3 / span 9; margin-top: 4vw; } .land .p6 .plate__img { aspect-ratio: 16 / 9; }
+  @media (max-width: 820px) {
+    .land .p1, .land .p2, .land .p3, .land .p6 { grid-column: 1 / -1; margin-top: 0; }
+    .land .diptych { grid-template-columns: 1fr; }
+  }
+
+  /* ───────── Pull moment ───────── */
+  .pull { position: relative; height: 110vh; overflow: hidden; }
+  .pull img { width: 100%; height: 100%; object-fit: cover; transform: scale(1.05); }
+  .pull::after { content:""; position: absolute; inset: 0;
+    background: linear-gradient(180deg, rgba(0,0,0,.15) 0%, rgba(0,0,0,.05) 40%, rgba(0,0,0,.7) 100%);
+  }
+  .pull__cap {
+    position: absolute; left: var(--pad-x); bottom: var(--pad-x); right: var(--pad-x);
+    display: flex; justify-content: space-between; align-items: flex-end; gap: 24px; color: var(--paper); z-index: 2;
+  }
+  .pull__place {
+    font-family: var(--display); font-variation-settings: "wght" 900, "opsz" 144;
+    font-size: clamp(54px, 14vw, 220px); line-height: .84; letter-spacing: -.045em; text-transform: uppercase;
+  }
+  .pull__place .a { color: var(--accent); font-style: normal; }
+  .pull__meta { font-size: 11px; letter-spacing: .3em; text-transform: uppercase; opacity: .9; }
+  .pull__meta strong { display: block; font-family: var(--display); font-variation-settings:"wght" 500, "opsz" 14; font-size: 14px; letter-spacing: 0; text-transform: none; color: var(--accent); font-weight: 500; margin-top: 4px; }
+
+  /* ───────── 02 WILD — horizontal scroll ───────── */
+  .h-scroll { position: relative; height: 360vh; }
+  .h-scroll__sticky {
+    position: sticky; top: 0; height: 100vh; height: calc(var(--vh)*100);
+    overflow: hidden; display: flex; align-items: center;
+  }
+  .h-scroll__track {
+    display: flex; gap: var(--gap); padding: 0 var(--pad-x);
+    will-change: transform;
+  }
+  .h-scroll__intro {
+    flex: 0 0 auto; width: clamp(280px, 36vw, 520px);
+    display: grid; align-content: center; gap: 18px; padding-right: 2vw;
+  }
+  .h-scroll__num {
+    font-family: var(--display); font-variation-settings: "wght" 700, "opsz" 144;
+    font-size: clamp(40px, 5vw, 72px); line-height: 1; color: var(--accent); letter-spacing: -.015em;
+  }
+  .h-scroll__title {
+    font-family: var(--display); font-variation-settings: "wght" 500, "opsz" 144;
+    font-size: clamp(56px, 9vw, 140px); line-height: .9; letter-spacing: -.04em; text-transform: uppercase; color: var(--paper);
+  }
+  .h-scroll__title .it { font-style: italic; font-variation-settings: "wght" 300, "opsz" 144; color: var(--accent); text-transform: none; padding: 0 .1em; }
+  .h-scroll__meta { font-size: 10.5px; letter-spacing: .3em; text-transform: uppercase; color: var(--ink-dim); }
+  .h-scroll__plate { flex: 0 0 auto; position: relative; height: 70vh; aspect-ratio: 3 / 4; cursor: pointer; }
+  .h-scroll__plate.wide { aspect-ratio: 16 / 9; }
+  .h-scroll__plate.square { aspect-ratio: 1 / 1; }
+  .h-scroll__plate img { width: 100%; height: 100%; object-fit: cover; transition: transform 1.8s cubic-bezier(.2,.7,.2,1); }
+  .h-scroll__plate:hover img { transform: scale(1.04); }
+  .h-scroll__cap {
+    position: absolute; left: 0; bottom: -42px; right: 0;
+    display: grid; grid-template-columns: auto 1fr auto; gap: 14px;
+    font-size: 10px; letter-spacing: .28em; text-transform: uppercase; color: var(--ink-dim);
+  }
+  .h-scroll__cap em { font-family: var(--display); font-style: normal; font-variation-settings: "wght" 700, "opsz" 24; color: var(--accent); font-size: 13px; letter-spacing: 0; text-transform: none; }
+  .h-scroll__cap .ti { font-family: var(--display); font-style: italic; color: var(--paper); text-transform: none; font-size: 13px; letter-spacing: 0; }
+  .h-scroll__cap .me { font-variant-numeric: tabular-nums; text-align: right; }
+  .h-scroll__progress {
+    position: absolute; left: 50%; bottom: 26px; transform: translateX(-50%);
+    width: clamp(120px, 16vw, 200px); height: 1px; background: var(--ink-faint);
+  }
+  .h-scroll__progress::after { content:""; display:block; width: 0%; height: 100%; background: var(--accent); transition: width .2s linear; }
+  .h-scroll__hint { position: absolute; left: var(--pad-x); bottom: 22px; font-size: 9px; letter-spacing: .35em; text-transform: uppercase; color: var(--ink-dim); display: inline-flex; align-items: center; gap: 12px; }
+  .h-scroll__hint::before { content:""; width: 24px; height: 1px; background: currentColor; }
+  @media (max-width: 820px) {
+    .h-scroll { height: auto; }
+    .h-scroll__sticky { position: static; height: auto; }
+    .h-scroll__track { flex-direction: column; padding: 0 var(--pad-x); }
+    .h-scroll__plate { width: 100%; height: auto; aspect-ratio: 4/5; }
+    .h-scroll__plate.wide { aspect-ratio: 4 / 3; }
+    .h-scroll__cap { position: relative; bottom: auto; margin-top: 12px; padding-top: 12px; border-top: 1px solid var(--rule); margin-bottom: 24px; }
+    .h-scroll__intro { width: 100%; padding-right: 0; }
+    .h-scroll__progress, .h-scroll__hint { display: none; }
+  }
+
+  /* ───────── SPOTLIGHT — cursor-revealed color ───────── */
+  .spot {
+    padding: clamp(80px, 12vw, 160px) var(--pad-x);
+    border-top: 1px solid var(--rule); border-bottom: 1px solid var(--rule);
+  }
+  .spot__head { display: grid; grid-template-columns: auto 1fr auto; align-items: end; gap: 32px; margin-bottom: clamp(40px, 6vw, 80px); padding-bottom: 16px; border-bottom: 1px solid var(--rule); }
+  .spot__kicker { font-size: 10.5px; letter-spacing: .3em; text-transform: uppercase; color: var(--ink-dim); padding-bottom: 14px; }
+  .spot__title {
+    font-family: var(--display); font-variation-settings: "wght" 500, "opsz" 144;
+    font-size: clamp(48px, 9vw, 140px); line-height: .9; letter-spacing: -.04em; text-transform: uppercase; color: var(--paper);
+  }
+  .spot__title .it { font-style: italic; font-variation-settings: "wght" 300, "opsz" 144; color: var(--accent); text-transform: none; padding: 0 .1em; }
+  .spot__hint { font-size: 10.5px; letter-spacing: .3em; text-transform: uppercase; color: var(--accent); padding-bottom: 14px; }
+  .spot__stage {
+    position: relative; aspect-ratio: 16 / 9; overflow: hidden; background: var(--bg-soft);
+  }
+  .spot__stage img { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; }
+  .spot__stage .bw { filter: brightness(.35) contrast(.85); }
+  .spot__stage .col {
+    -webkit-mask-image: radial-gradient(circle 0px at 50% 50%, black 60%, transparent 100%);
+            mask-image: radial-gradient(circle 0px at 50% 50%, black 60%, transparent 100%);
+    transition: -webkit-mask-image .15s linear, mask-image .15s linear;
+  }
+  .spot__stage.is-active .col { /* radius expanded via inline style */ }
+  .spot__label {
+    position: absolute; left: 24px; bottom: 18px;
+    font-size: 11px; letter-spacing: .3em; text-transform: uppercase; color: var(--paper);
+    display: inline-flex; align-items: center; gap: 12px;
+    text-shadow: 0 1px 12px rgba(0,0,0,.6);
+  }
+  .spot__label em { font-family: var(--display); font-style: normal; font-variation-settings: "wght" 700, "opsz" 24; color: var(--accent); font-size: 14px; letter-spacing: 0; text-transform: none; }
+  @media (max-width: 760px) {
+    .spot__stage .col { -webkit-mask-image: none; mask-image: none; }
+  }
+
+  /* ───────── 03 FORM — editorial alternating ───────── */
+  .form .editorial { display: flex; flex-direction: column; gap: clamp(60px, 8vw, 100px); }
+  .ed-row { display: grid; grid-template-columns: 1fr 1fr; align-items: end; gap: var(--gap); }
+  .ed-row.alt { direction: rtl; } .ed-row.alt > * { direction: ltr; }
+  .ed-row .plate__img { aspect-ratio: 3 / 4; }
+  .ed-row .plate.short .plate__img { aspect-ratio: 5 / 4; }
+  .ed-row__meta { align-self: end; padding-bottom: 12px; display: flex; flex-direction: column; gap: 14px; }
+  .ed-row__num {
+    font-family: var(--display); font-variation-settings: "wght" 900, "opsz" 144;
+    font-size: clamp(64px, 11vw, 160px); line-height: 1; letter-spacing: -.04em; color: var(--accent);
+  }
+  .ed-row__title {
+    font-family: var(--display); font-variation-settings: "wght" 500, "opsz" 144;
+    font-size: clamp(28px, 4.6vw, 60px); line-height: 1; letter-spacing: -.02em; text-transform: uppercase; color: var(--paper);
+  }
+  .ed-row__title .it { font-style: italic; font-variation-settings: "wght" 300, "opsz" 144; text-transform: none; color: var(--ink); padding: 0 .12em; }
+  .ed-row__line { font-size: 11px; letter-spacing: .3em; text-transform: uppercase; color: var(--ink-dim); display: flex; gap: 18px; flex-wrap: wrap; }
+  .ed-row__line span:not(:last-child)::after { content: ""; display: inline-block; width: 14px; height: 1px; background: var(--ink-dim); margin-left: 18px; vertical-align: middle; opacity: .6; }
+  @media (max-width: 820px) {
+    .ed-row, .ed-row.alt { grid-template-columns: 1fr; direction: ltr; }
+  }
+
+  /* ───────── Stat strip ───────── */
+  .stats { padding: clamp(60px, 8vw, 120px) var(--pad-x); border-top: 1px solid var(--rule); }
+  .stats__row { display: grid; grid-template-columns: repeat(4, 1fr); gap: var(--gap); }
+  .stats__cell { border-top: 1px solid var(--rule); padding-top: 22px; }
+  .stats__num {
+    font-family: var(--display); font-variation-settings: "wght" 700, "opsz" 144;
+    font-size: clamp(48px, 7vw, 100px); line-height: .9; letter-spacing: -.03em; color: var(--paper);
+  }
+  .stats__num .a { color: var(--accent); }
+  .stats__label { margin-top: 8px; font-size: 10.5px; letter-spacing: .3em; text-transform: uppercase; color: var(--ink-dim); }
+  @media (max-width: 720px) { .stats__row { grid-template-columns: 1fr 1fr; } }
+
+  /* ───────── Flat-plan index ───────── */
+  .flat {
+    padding: clamp(80px, 12vw, 160px) var(--pad-x);
+    border-top: 1px solid var(--rule);
+  }
+  .flat__head {
+    display: grid; grid-template-columns: auto 1fr auto; align-items: baseline; gap: 24px;
+    margin-bottom: clamp(40px, 6vw, 70px);
+    font-size: 10.5px; letter-spacing: .3em; text-transform: uppercase; color: var(--ink-dim);
+  }
+  .flat__title {
+    font-family: var(--display); font-variation-settings: "wght" 600, "opsz" 144;
+    font-size: clamp(48px, 9vw, 140px); line-height: .9; letter-spacing: -.04em; text-transform: uppercase; color: var(--paper);
+  }
+  .flat__title .it { font-style: italic; font-variation-settings: "wght" 300, "opsz" 144; color: var(--accent); text-transform: none; padding: 0 .1em; }
+  .flat__grid { display: grid; grid-template-columns: repeat(8, 1fr); gap: 18px 22px; }
+  @media (max-width: 1100px) { .flat__grid { grid-template-columns: repeat(4, 1fr); } }
+  @media (max-width: 600px) { .flat__grid { grid-template-columns: repeat(2, 1fr); } }
+  .flat__cell { display: flex; flex-direction: column; gap: 8px; cursor: pointer; }
+  .flat__row { display: flex; justify-content: space-between; align-items: baseline; font-size: 10px; letter-spacing: .28em; text-transform: uppercase; color: var(--ink-dim); }
+  .flat__row strong { font-family: var(--display); font-variation-settings: "wght" 700, "opsz" 36; font-size: 14px; letter-spacing: -.01em; color: var(--paper); }
+  .flat__thumb { aspect-ratio: 4 / 5; overflow: hidden; background: var(--bg-soft); }
+  .flat__thumb img { width: 100%; height: 100%; object-fit: cover; transition: transform 1s cubic-bezier(.2,.7,.2,1), filter 1s; filter: grayscale(.55); }
+  .flat__cell:hover .flat__thumb img { transform: scale(1.05); filter: grayscale(0); }
+
+  /* ───────── Contact ───────── */
+  .contact { padding: clamp(120px, 18vw, 240px) var(--pad-x) 60px; border-top: 1px solid var(--rule); }
+  .contact__kicker { font-size: 11px; letter-spacing: .3em; text-transform: uppercase; color: var(--ink-dim); margin-bottom: 22px; }
+  .contact__big {
+    font-family: var(--display); font-variation-settings: "wght" 700, "opsz" 144;
+    font-size: clamp(60px, 16vw, 260px); line-height: .85; letter-spacing: -.045em; text-transform: uppercase; color: var(--paper);
+  }
+  .contact__big .it { font-style: italic; font-variation-settings: "wght" 300, "opsz" 144; text-transform: none; color: var(--accent); padding: 0 .1em; }
+  .contact__mail {
+    display: inline-block; margin-top: 44px; margin-left: clamp(40px, 7vw, 120px);
+    font-family: var(--display); font-variation-settings: "wght" 400, "opsz" 64;
+    font-style: italic; font-size: clamp(30px, 4.4vw, 60px);
+    border-bottom: 1px solid var(--rule); padding-bottom: 8px;
+    transition: border-color .4s, color .4s;
+  }
+  .contact__mail:hover { color: var(--accent); border-color: var(--accent); }
+
+  .contact__sig {
+    display: block; margin: 60px 0 0; width: clamp(180px, 22vw, 320px); height: auto; color: var(--ink); opacity: .85;
+  }
+  .contact__sig path { stroke: currentColor; stroke-width: 1.6; fill: none; stroke-linecap: round; stroke-linejoin: round; stroke-dasharray: 1400; stroke-dashoffset: 1400; }
+  .contact__sig.is-in path { animation: sig 3.2s cubic-bezier(.2,.7,.2,1) forwards; }
+  @keyframes sig { to { stroke-dashoffset: 0; } }
+
+  .contact__row {
+    margin-top: clamp(80px, 10vw, 140px);
+    display: flex; gap: 24px;
+    border-top: 1px solid var(--rule); padding-top: 22px;
+    font-size: 11px; letter-spacing: .28em; text-transform: uppercase; color: var(--ink-dim);
+  }
+  .contact__row a { color: var(--paper); }
+  .contact__row a:hover { color: var(--accent); }
+
+  .foot {
+    margin-top: 60px;
+    display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 12px;
+    padding-top: 18px; border-top: 1px solid var(--rule);
+    font-size: 10.5px; letter-spacing: .28em; text-transform: uppercase; color: var(--ink-dim);
+  }
+
+  /* ───────── Reveal ───────── */
+  .reveal { opacity: 0; transform: translateY(36px); transition: opacity 1s cubic-bezier(.2,.7,.2,1), transform 1s cubic-bezier(.2,.7,.2,1); }
+  .reveal.is-in { opacity: 1; transform: none; }
+  .reveal.d1 { transition-delay: .08s; }
+  .reveal.d2 { transition-delay: .16s; }
+  .reveal.d3 { transition-delay: .24s; }
+
+  /* ───────── Lightbox ───────── */
+  body.lb-open { overflow: hidden; }
+  .lightbox {
+    position: fixed; inset: 0; z-index: 500;
+    background: rgba(10,10,10,.97);
+    backdrop-filter: blur(8px); -webkit-backdrop-filter: blur(8px);
+    display: grid; grid-template-rows: auto 1fr auto;
+    opacity: 0; visibility: hidden; pointer-events: none;
+    transition: opacity .5s ease, visibility .5s ease;
+  }
+  .lightbox.is-open { opacity: 1; visibility: visible; pointer-events: auto; }
+  .lightbox__topbar {
+    display: grid; grid-template-columns: 1fr auto 1fr; align-items: center;
+    padding: 20px var(--pad-x);
+    font-size: 10.5px; letter-spacing: .3em; text-transform: uppercase; color: var(--ink-dim);
+  }
+  .lightbox__count em {
+    font-family: var(--display); font-variation-settings: "wght" 700, "opsz" 36;
+    font-style: normal; color: var(--accent); font-size: 16px; letter-spacing: -.01em; padding: 0 6px;
+  }
+  .lightbox__count .dim { opacity: .55; padding-left: 6px; }
+  .lightbox__mark { grid-column: 2; font-family: var(--display); font-variation-settings: "wght" 600, "opsz" 14; font-size: 14px; color: var(--paper); letter-spacing: 0; text-transform: none; }
+  .lightbox__mark .a { color: var(--accent); padding: 0 .25em; }
+  .lightbox__close {
+    grid-column: 3; justify-self: end; cursor: pointer; color: var(--paper);
+    font-family: var(--display); font-variation-settings: "wght" 300, "opsz" 36; font-size: 30px; line-height: 1;
+    transition: color .4s, transform .4s; padding: 4px 8px;
+  }
+  .lightbox__close:hover { color: var(--accent); transform: rotate(90deg); }
+  .lightbox__stage {
+    position: relative; display: grid; place-items: center;
+    padding: 12px calc(var(--pad-x) + 60px);
+    overflow: hidden;
+    /* CRITICAL: let grid children shrink below their content size */
+    min-height: 0; min-width: 0;
+  }
+  .lightbox__img {
+    /* Belt + braces sizing: parent-relative AND viewport-relative caps */
+    max-width: 100%;
+    max-height: 100%;
+    width: auto; height: auto;
+    object-fit: contain; display: block;
+    box-shadow: 0 30px 80px rgba(0,0,0,.5);
+    opacity: 0; transform: scale(.98);
+    transition: opacity .55s ease, transform .55s cubic-bezier(.2,.7,.2,1);
+  }
+  /* Fallback for browsers/contexts where the grid 1fr collapses unexpectedly */
+  @supports (height: 100dvh) {
+    .lightbox__img { max-height: calc(100dvh - 220px); max-width: calc(100vw - 2 * (var(--pad-x) + 100px)); }
+  }
+  .lightbox.is-open .lightbox__img.is-ready { opacity: 1; transform: none; }
+  .lightbox__nav {
+    position: absolute; top: 50%; transform: translateY(-50%);
+    cursor: pointer; color: var(--paper);
+    width: 48px; height: 48px; display: grid; place-items: center;
+    font-family: var(--display); font-variation-settings: "wght" 300, "opsz" 64; font-size: 44px; line-height: 1;
+    opacity: .55; transition: opacity .3s, color .3s;
+  }
+  .lightbox__nav:hover { opacity: 1; color: var(--accent); }
+  .lightbox__nav.prev { left: 16px; } .lightbox__nav.next { right: 16px; }
+  .lightbox__caption {
+    padding: 20px var(--pad-x) 28px;
+    display: grid; grid-template-columns: 1fr auto 1fr; gap: 24px; align-items: center;
+    border-top: 1px solid var(--rule);
+  }
+  .lightbox__caption .l { text-align: left; } .lightbox__caption .c { text-align: center; } .lightbox__caption .r { text-align: right; }
+  .lightbox__title { font-family: var(--display); font-variation-settings: "wght" 500, "opsz" 36; font-size: clamp(16px, 1.9vw, 22px); color: var(--paper); letter-spacing: -.005em; }
+  .lightbox__loc { font-size: 10.5px; letter-spacing: .3em; text-transform: uppercase; color: var(--ink-dim); font-variant-numeric: tabular-nums; }
+  .lightbox__kicker { font-size: 10.5px; letter-spacing: .3em; text-transform: uppercase; color: var(--ink-dim); }
+  .lightbox__kicker em { font-family: var(--display); font-style: normal; font-variation-settings: "wght" 700, "opsz" 36; color: var(--accent); text-transform: none; letter-spacing: 0; font-size: 14px; padding: 0 4px; }
+  @media (max-width: 760px) {
+    .lightbox__stage { padding: 0 16px; }
+    .lightbox__nav { width: 36px; height: 36px; font-size: 28px; }
+    .lightbox__nav.prev { left: 4px; } .lightbox__nav.next { right: 4px; }
+    .lightbox__caption { grid-template-columns: 1fr; text-align: center; gap: 8px; }
+    .lightbox__caption .l, .lightbox__caption .r { text-align: center; }
+  }
+
+  /* Reduced motion */
+  @media (prefers-reduced-motion: reduce) {
+    *, *::before, *::after { animation: none !important; transition: none !important; }
+    .reveal { opacity: 1 !important; transform: none !important; }
+    .contact__sig path { stroke-dashoffset: 0 !important; }
+  }
+</style>
+</head>
+<body>
+
+<div class="grain" aria-hidden="true"></div>
+<div class="vignette" aria-hidden="true"></div>
+
+<div class="cursor" aria-hidden="true"></div>
+<div class="cursor-dot" aria-hidden="true"></div>
+
+<!-- ───────── Loader ───────── -->
+<div class="loader" aria-hidden="true">
+  <div class="loader__l">
+    <span>Dudas — Photographs</span>
+    <span class="r">Selected works</span>
+  </div>
+  <div class="loader__center">
+    <div class="mask-name">Dudas</div>
+  </div>
+  <div class="loader__b">
+    <span class="loader__pct" id="loadPct">000</span>
+    <div class="loader__bar"></div>
+    <span>Loading</span>
+  </div>
+</div>
+
+<!-- ───────── Masthead ───────── -->
+<header class="mast">
+  <div class="mast__l">
+    <a href="#land" data-hover>01 Land</a>
+    <a href="#wild" data-hover>02 Wild</a>
+    <a href="#form" data-hover>03 Form</a>
+  </div>
+  <a href="#" class="mast__brand">Dudas<span class="a">.</span></a>
+  <div class="mast__r">
+    <a href="#index" data-hover>Index</a>
+    <a href="#contact" data-hover>Contact</a>
+  </div>
+</header>
+
+<!-- ───────── HERO — full-bleed mountain, slow zoom ───────── -->
+<section class="hero">
+  <div class="hero__media">
+    <img src="photos/hillside-panorama.webp" alt="Mountain range" loading="eager" fetchpriority="high" decoding="async">
+  </div>
+
+  <div class="hero__top">
+    <div class="l">No. <em>01</em><span class="dash"></span>Portfolio</div>
+    <div class="c">Photographs</div>
+    <div class="r">Selected Works</div>
+  </div>
+
+  <div class="hero__center">
+    <div class="hero__kicker">— David Dudas —</div>
+    <h1 class="hero__title">
+      <span class="l1"><span>Photographs</span></span>
+      <span class="l2"><span>by <em>Dudas</em><span class="dot">.</span></span></span>
+    </h1>
+    <p class="hero__sub">Land, weather, and wild things.</p>
+  </div>
+
+  <div class="hero__bot">
+    <div class="l">Three chapters <span class="dash"></span> 112 plates</div>
+    <div class="c">By David Dudas</div>
+    <div class="r"><span class="hero__scroll">Scroll</span></div>
+  </div>
+</section>
+
+<!-- ───────── Marquee ───────── -->
+<div class="marquee" aria-hidden="true">
+  <div class="marquee__track">
+    <span>Land</span><span class="it">&amp;</span><span>Wild</span><span class="it">&amp;</span><span>Form</span><span class="it">·</span>
+    <span>Land</span><span class="it">&amp;</span><span>Wild</span><span class="it">&amp;</span><span>Form</span><span class="it">·</span>
+    <span>Land</span><span class="it">&amp;</span><span>Wild</span><span class="it">&amp;</span><span>Form</span><span class="it">·</span>
+    <span>Land</span><span class="it">&amp;</span><span>Wild</span><span class="it">&amp;</span><span>Form</span><span class="it">·</span>
+  </div>
+</div>
+
+<!-- ───────── 01 LAND ───────── -->
+<section class="sec land" id="land">
+  <header class="sec__head">
+    <div class="sec__num reveal">01</div>
+    <h2 class="sec__title reveal d1">Land<span class="it">scape</span></h2>
+    <div class="sec__meta reveal d2">6 plates<br/>Black &amp; white</div>
+  </header>
+
+  <div class="grid">
+    <figure class="plate p1 reveal" data-lb data-title="Lake, at dusk" data-loc="Field notes" data-chapter="01 Land">
+      <div class="plate__img"><img loading="lazy" decoding="async" src="photos/mid/lake-sunset-reflection.webp" alt="Lake at dusk"></div>
+      <figcaption class="plate__cap"><span class="plate__num">No. 01</span><span class="plate__title">Lake, at dusk</span><span class="plate__meta">Field notes</span></figcaption>
+    </figure>
+    <figure class="plate p2 reveal d1" data-lb data-title="A tree, holding the mountain" data-loc="Field notes" data-chapter="01 Land">
+      <div class="plate__img"><img loading="lazy" decoding="async" src="photos/mid/lone-dead-tree-mountain.webp" alt="Lone dead tree against mountain"></div>
+      <figcaption class="plate__cap"><span class="plate__num">No. 02</span><span class="plate__title">A tree, holding the mountain</span><span class="plate__meta">Field notes</span></figcaption>
+    </figure>
+    <figure class="plate p3 reveal d2" data-lb data-title="Above the silence" data-loc="Field notes" data-chapter="01 Land">
+      <div class="plate__img"><img loading="lazy" decoding="async" src="photos/mid/milky-way-peaks.webp" alt="Milky Way over peaks"></div>
+      <figcaption class="plate__cap"><span class="plate__num">No. 03</span><span class="plate__title">Above the silence</span><span class="plate__meta">Field notes</span></figcaption>
+    </figure>
+
+    <div class="diptych">
+      <figure class="plate reveal" data-lb data-title="A figure, a plain" data-loc="Field notes" data-chapter="01 Land">
+        <div class="plate__img"><img loading="lazy" decoding="async" src="photos/mid/lone-figure-plain.webp" alt="Lone figure on a dry plain"></div>
+        <figcaption class="plate__cap"><span class="plate__num">No. 04</span><span class="plate__title">A figure, a plain</span><span class="plate__meta">Field notes</span></figcaption>
+      </figure>
+      <figure class="plate reveal d1" data-lb data-title="Cracked earth" data-loc="Field notes" data-chapter="01 Land">
+        <div class="plate__img"><img loading="lazy" decoding="async" src="photos/mid/cracked-mud.webp" alt="Cracked earth texture"></div>
+        <figcaption class="plate__cap"><span class="plate__num">No. 05</span><span class="plate__title">Cracked earth</span><span class="plate__meta">Field notes</span></figcaption>
+      </figure>
+    </div>
+
+    <figure class="plate p6 reveal" data-lb data-title="Distant peaks" data-loc="Field notes" data-chapter="01 Land">
+      <div class="plate__img"><img loading="lazy" decoding="async" src="photos/mid/misty-distant-peaks.webp" alt="Distant peaks in mist"></div>
+      <figcaption class="plate__cap"><span class="plate__num">No. 06</span><span class="plate__title">Distant peaks</span><span class="plate__meta">Field notes</span></figcaption>
+    </figure>
+  </div>
+</section>
+
+<!-- ───────── PULL moment ───────── -->
+<div class="pull">
+  <img loading="lazy" decoding="async" src="photos/mid/cracked-earth-pano.webp" alt="Cracked earth panorama">
+  <div class="pull__cap">
+    <div class="pull__place">Earth<span class="a">.</span></div>
+    <div class="pull__meta">Plate · No. 07<strong>35mm</strong></div>
+  </div>
+</div>
+
+<!-- ───────── 02 WILD — horizontal scroll ───────── -->
+<section class="h-scroll" id="wild">
+  <div class="h-scroll__sticky">
+    <div class="h-scroll__track" id="hsTrack">
+      <div class="h-scroll__intro">
+        <div class="h-scroll__num">02</div>
+        <h2 class="h-scroll__title">Wild<span class="it">life.</span></h2>
+        <div class="h-scroll__meta">5 plates<br/>Black &amp; white<br/>Scroll to follow →</div>
+      </div>
+
+      <figure class="h-scroll__plate" data-lb data-title="Frog, perched" data-loc="Field notes" data-chapter="02 Wild">
+        <img loading="lazy" decoding="async" src="photos/mid/frog-perched.webp" alt="Frog perched">
+        <div class="h-scroll__cap"><em>No. 08</em><span class="ti">Frog, perched</span><span class="me">Field notes</span></div>
+      </figure>
+      <figure class="h-scroll__plate square" data-lb data-title="Cat, on the path" data-loc="Field notes" data-chapter="02 Wild">
+        <img loading="lazy" decoding="async" src="photos/mid/cat-on-path.webp" alt="A cat on a path">
+        <div class="h-scroll__cap"><em>No. 09</em><span class="ti">Cat, on the path</span><span class="me">Field notes</span></div>
+      </figure>
+      <figure class="h-scroll__plate wide" data-lb data-title="Sparrow, branch" data-loc="Field notes" data-chapter="02 Wild">
+        <img loading="lazy" decoding="async" src="photos/mid/sparrow-branch-3.webp" alt="Sparrow on a branch">
+        <div class="h-scroll__cap"><em>No. 10</em><span class="ti">Sparrow, branch</span><span class="me">Field notes</span></div>
+      </figure>
+      <figure class="h-scroll__plate" data-lb data-title="Alligator, eye level" data-loc="Field notes" data-chapter="02 Wild">
+        <img loading="lazy" decoding="async" src="photos/mid/alligator-portrait.webp" alt="Alligator portrait, eye level">
+        <div class="h-scroll__cap"><em>No. 11</em><span class="ti">Alligator, eye level</span><span class="me">Field notes</span></div>
+      </figure>
+      <figure class="h-scroll__plate square" data-lb data-title="Yorkie, close" data-loc="Field notes" data-chapter="02 Wild">
+        <img loading="lazy" decoding="async" src="photos/mid/yorkie-portrait.webp" alt="Yorkie close portrait">
+        <div class="h-scroll__cap"><em>No. 12</em><span class="ti">Yorkie, close</span><span class="me">Field notes</span></div>
+      </figure>
+    </div>
+    <div class="h-scroll__hint">Scroll · the wild moves</div>
+    <div class="h-scroll__progress" id="hsProgress"></div>
+  </div>
+</section>
+
+<!-- ───────── SPOTLIGHT ───────── -->
+<section class="spot" id="spot">
+  <header class="spot__head">
+    <div class="spot__kicker reveal">Interlude — Find the frame</div>
+    <h2 class="spot__title reveal d1">Hold your <span class="it">cursor</span>.</h2>
+    <div class="spot__hint reveal d2">Light follows attention →</div>
+  </header>
+
+  <div class="spot__stage" id="spotStage">
+    <img loading="lazy" decoding="async" class="bw" src="photos/mid/frog-on-log.webp" alt="Frog on a log">
+    <img loading="lazy" decoding="async" class="col" src="photos/mid/frog-on-log.webp" alt="Frog on a log">
+    <div class="spot__label"><em>No. 13</em>Frog, on a log</div>
+  </div>
+</section>
+
+<!-- ───────── 03 FORM ───────── -->
+<section class="sec form" id="form">
+  <header class="sec__head">
+    <div class="sec__num reveal">03</div>
+    <h2 class="sec__title reveal d1">Form<span class="it">.</span></h2>
+    <div class="sec__meta reveal d2">5 plates<br/>Black &amp; white</div>
+  </header>
+
+  <div class="editorial">
+    <div class="ed-row">
+      <figure class="plate reveal" data-lb data-title="Pool table, late" data-loc="Field notes" data-chapter="03 Form">
+        <div class="plate__img"><img loading="lazy" decoding="async" src="photos/mid/pool-table-bw.webp" alt="Pool table in a dim room"></div>
+        <figcaption class="plate__cap"><span class="plate__num">No. 14</span><span class="plate__title">Pool table, late</span><span class="plate__meta">Field notes</span></figcaption>
+      </figure>
+      <div class="ed-row__meta reveal d1">
+        <div class="ed-row__num">14</div>
+        <div class="ed-row__title">Table, <span class="it">midnight.</span></div>
+        <div class="ed-row__line"><span>Interior</span><span>Felt</span></div>
+      </div>
+    </div>
+
+    <div class="ed-row alt">
+      <figure class="plate short reveal" data-lb data-title="Colonnade, lit" data-loc="Field notes" data-chapter="03 Form">
+        <div class="plate__img"><img loading="lazy" decoding="async" src="photos/mid/colonnade-lights.webp" alt="A lit colonnade"></div>
+        <figcaption class="plate__cap"><span class="plate__num">No. 15</span><span class="plate__title">Colonnade, lit</span><span class="plate__meta">Field notes</span></figcaption>
+      </figure>
+      <div class="ed-row__meta reveal d1">
+        <div class="ed-row__num">15</div>
+        <div class="ed-row__title">Colonnade, <span class="it">lit.</span></div>
+        <div class="ed-row__line"><span>Interior</span><span>Stone</span></div>
+      </div>
+    </div>
+
+    <div class="ed-row">
+      <figure class="plate reveal" data-lb data-title="A long hallway" data-loc="Field notes" data-chapter="03 Form">
+        <div class="plate__img"><img loading="lazy" decoding="async" src="photos/mid/hallway-interior.webp" alt="A long hallway"></div>
+        <figcaption class="plate__cap"><span class="plate__num">No. 16</span><span class="plate__title">A long hallway</span><span class="plate__meta">Field notes</span></figcaption>
+      </figure>
+      <div class="ed-row__meta reveal d1">
+        <div class="ed-row__num">16</div>
+        <div class="ed-row__title">Hallway, <span class="it">listening.</span></div>
+        <div class="ed-row__line"><span>Interior</span><span>Wood</span></div>
+      </div>
+    </div>
+
+    <div class="ed-row alt">
+      <figure class="plate short reveal" data-lb data-title="Brick & glass" data-loc="Field notes" data-chapter="03 Form">
+        <div class="plate__img"><img loading="lazy" decoding="async" src="photos/mid/old-brick-windows.webp" alt="Old brick building with windows"></div>
+        <figcaption class="plate__cap"><span class="plate__num">No. 17</span><span class="plate__title">Brick &amp; glass</span><span class="plate__meta">Field notes</span></figcaption>
+      </figure>
+      <div class="ed-row__meta reveal d1">
+        <div class="ed-row__num">17</div>
+        <div class="ed-row__title">Brick, <span class="it">glass.</span></div>
+        <div class="ed-row__line"><span>Façade</span><span>Brick</span></div>
+      </div>
+    </div>
+
+    <div class="ed-row">
+      <figure class="plate reveal" data-lb data-title="Interior, light through" data-loc="Field notes" data-chapter="03 Form">
+        <div class="plate__img"><img loading="lazy" decoding="async" src="photos/mid/red-interior-bw.webp" alt="An interior with light coming through"></div>
+        <figcaption class="plate__cap"><span class="plate__num">No. 18</span><span class="plate__title">Interior, light through</span><span class="plate__meta">Field notes</span></figcaption>
+      </figure>
+      <div class="ed-row__meta reveal d1">
+        <div class="ed-row__num">18</div>
+        <div class="ed-row__title">Room, <span class="it">opening.</span></div>
+        <div class="ed-row__line"><span>Interior</span><span>Light</span></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ───────── Stat strip ───────── -->
+<section class="stats">
+  <div class="stats__row">
+    <div class="stats__cell reveal"><div class="stats__num">112<span class="a">.</span></div><div class="stats__label">Plates in archive</div></div>
+    <div class="stats__cell reveal d1"><div class="stats__num">16<span class="a">.</span></div><div class="stats__label">Selected</div></div>
+    <div class="stats__cell reveal d2"><div class="stats__num">03<span class="a">.</span></div><div class="stats__label">Chapters</div></div>
+    <div class="stats__cell reveal d3"><div class="stats__num">01<span class="a">.</span></div><div class="stats__label">Camera, mostly</div></div>
+  </div>
+</section>
+
+<!-- ───────── Flat plan ───────── -->
+<section class="flat" id="index">
+  <header class="flat__head">
+    <span>Index</span>
+    <h3 class="flat__title">All<span class="it"> plates.</span></h3>
+    <span>001 — 112</span>
+  </header>
+  <div class="flat__grid" id="flatGrid"></div>
+</section>
+
+<!-- ───────── Contact ───────── -->
+<section class="contact" id="contact">
+  <div class="contact__kicker">Contact · No. 04 — Last page</div>
+  <h2 class="contact__big">Get in<br/><span class="it">touch.</span></h2>
+  <a class="contact__mail" href="mailto:daviddudas@hotmail.com" data-hover>email →</a>
+
+  <svg class="contact__sig" id="sig" viewBox="0 0 400 90" aria-hidden="true">
+    <path d="M 20 60
+             C 24 38, 30 22, 44 22
+             C 56 22, 56 50, 44 56
+             C 36 60, 32 50, 36 42
+             C 42 30, 60 24, 80 30
+             C 96 36, 88 60, 76 58
+             C 70 56, 72 46, 82 38
+             C 96 28, 110 32, 116 44
+             C 122 56, 118 64, 124 56
+             C 132 44, 138 30, 148 30
+             C 158 30, 158 58, 148 60
+             C 142 60, 140 50, 146 42
+             C 156 30, 172 30, 178 42
+             C 184 56, 178 62, 184 58
+             C 192 52, 198 38, 210 38
+             C 222 38, 222 58, 212 60
+             C 204 60, 204 50, 212 44
+             C 224 36, 242 38, 246 50
+             C 250 62, 244 66, 254 60
+             C 268 52, 274 36, 286 36
+             C 298 36, 296 60, 286 60
+             C 280 60, 280 50, 288 44
+             C 302 34, 320 38, 326 50
+             C 330 58, 326 64, 332 58
+             C 344 46, 356 30, 372 42" />
+    <line x1="20" y1="78" x2="380" y2="78" stroke="currentColor" stroke-width=".5" opacity=".3"/>
+  </svg>
+
+  <div class="contact__row">
+    <div><div style="opacity:.7;margin-bottom:8px">Elsewhere</div><a href="https://dudas.io" target="_blank" rel="noreferrer" data-hover>dudas.io →</a></div>
+  </div>
+
+  <div class="foot">
+    <div>© David Dudas · 2026</div>
+    <div>Photographs</div>
+    <div><a href="#" onclick="window.scrollTo({top:0,behavior:'smooth'});return false;" data-hover>↑ Top</a></div>
+  </div>
+</section>
+
+<!-- ───────── Lightbox ───────── -->
+<div class="lightbox" id="lightbox" aria-hidden="true" role="dialog" aria-modal="true">
+  <div class="lightbox__topbar">
+    <div class="lightbox__count">Plate <em id="lbNum">001</em><span class="dim">⁄ <span id="lbTotal">112</span></span></div>
+    <div class="lightbox__mark">Dudas<span class="a">.</span></div>
+    <button class="lightbox__close" id="lbClose" aria-label="Close">×</button>
+  </div>
+  <div class="lightbox__stage">
+    <button class="lightbox__nav prev" id="lbPrev" aria-label="Previous">‹</button>
+    <img class="lightbox__img" id="lbImg" alt="" />
+    <button class="lightbox__nav next" id="lbNext" aria-label="Next">›</button>
+  </div>
+  <div class="lightbox__caption">
+    <div class="l"><span class="lightbox__kicker">From <em id="lbChapter">01 Land</em></span></div>
+    <div class="c"><span class="lightbox__title" id="lbTitle"></span></div>
+    <div class="r"><span class="lightbox__loc" id="lbLoc"></span></div>
+  </div>
+</div>
+
+<script>
+(() => {
+  // ───── Boot
+  const setVh = () => document.documentElement.style.setProperty('--vh', (window.innerHeight * 0.01) + 'px');
+  setVh(); addEventListener('resize', setVh);
+  
+
+  // ───── Loader
+  const pctEl = document.getElementById('loadPct');
+  const t0 = performance.now();
+  const dur = 1100;
+  const reveal = () => {
+    document.body.classList.add('is-loaded');
+    setTimeout(() => document.body.classList.add('loader-done'), 1800);
+  };
+  const tickLoad = (now) => {
+    const k = Math.min(1, (now - t0) / dur);
+    if (pctEl) pctEl.textContent = String(Math.floor(k * 100)).padStart(3, '0');
+    if (k < 1) requestAnimationFrame(tickLoad);
+    else setTimeout(reveal, 150);
+  };
+  requestAnimationFrame(tickLoad);
+  setTimeout(reveal, 1800);
+  setTimeout(() => document.body.classList.add('loader-done'), 3500);
+
+  // ───── Reveal
+  const io = new IntersectionObserver((entries) => {
+    entries.forEach(e => { if (e.isIntersecting) { e.target.classList.add('is-in'); io.unobserve(e.target); } });
+  }, { threshold: 0.12, rootMargin: '0px 0px -8% 0px' });
+  document.querySelectorAll('.reveal').forEach(el => io.observe(el));
+
+  // ───── Custom cursor
+  const cursor = document.querySelector('.cursor');
+  const dot = document.querySelector('.cursor-dot');
+  if (cursor && dot && matchMedia('(hover:hover)').matches) {
+    let mx = innerWidth/2, my = innerHeight/2, cx = mx, cy = my, dx = mx, dy = my;
+    addEventListener('mousemove', (e) => { mx = e.clientX; my = e.clientY; }, { passive: true });
+    const tick = () => {
+      cx += (mx - cx) * 0.18; cy += (my - cy) * 0.18;
+      dx += (mx - dx) * 0.5; dy += (my - dy) * 0.5;
+      cursor.style.transform = `translate(${cx}px, ${cy}px) translate(-50%, -50%)`;
+      dot.style.transform = `translate(${dx}px, ${dy}px) translate(-50%, -50%)`;
+      requestAnimationFrame(tick);
+    };
+    requestAnimationFrame(tick);
+    document.querySelectorAll('a, button, [data-hover]').forEach(el => {
+      el.addEventListener('mouseenter', () => cursor.classList.add('is-hover'));
+      el.addEventListener('mouseleave', () => cursor.classList.remove('is-hover'));
+    });
+    document.querySelectorAll('.plate, .h-scroll__plate, .flat__cell').forEach(el => {
+      el.addEventListener('mouseenter', () => cursor.classList.add('is-hover-img'));
+      el.addEventListener('mouseleave', () => cursor.classList.remove('is-hover-img'));
+    });
+  }
+
+  // ───── Hero mask shift on mouse
+  const heroName = document.querySelector('[data-hero-name]');
+  if (heroName && matchMedia('(hover:hover)').matches) {
+    addEventListener('mousemove', (e) => {
+      const x = (e.clientX / innerWidth - 0.5) * 12;
+      const y = (e.clientY / innerHeight - 0.5) * 8 + 30;
+      heroName.style.backgroundPosition = `${50 + x}% ${y}%`;
+    }, { passive: true });
+  }
+
+  // ───── Horizontal scroll for WILD
+  const hs = document.getElementById('wild');
+  const hsTrack = document.getElementById('hsTrack');
+  const hsProgress = document.getElementById('hsProgress');
+  if (hs && hsTrack && innerWidth > 820) {
+    const update = () => {
+      const r = hs.getBoundingClientRect();
+      const trackW = hsTrack.scrollWidth;
+      const winW = innerWidth;
+      const totalScroll = hs.offsetHeight - innerHeight;
+      const progress = Math.min(1, Math.max(0, -r.top / totalScroll));
+      const maxX = trackW - winW;
+      hsTrack.style.transform = `translate3d(${-progress * maxX}px, 0, 0)`;
+      if (hsProgress) hsProgress.style.setProperty('--p', progress);
+      if (hsProgress && hsProgress.firstElementChild === null) {
+        // Use ::after width via inline style — toggle via CSS variable not supported directly; set width manually
+      }
+      if (hsProgress) {
+        // since ::after is purely CSS, expose progress via a child div approach
+        let bar = hsProgress.querySelector('.bar');
+        if (!bar) { bar = document.createElement('div'); bar.className = 'bar'; bar.style.cssText = 'height:100%;background:var(--accent);width:0;'; hsProgress.appendChild(bar); }
+        bar.style.width = (progress * 100).toFixed(1) + '%';
+      }
+    };
+    addEventListener('scroll', update, { passive: true });
+    addEventListener('resize', update);
+    update();
+  }
+
+  // ───── Spotlight (cursor-revealed color)
+  const spot = document.getElementById('spotStage');
+  if (spot && matchMedia('(hover:hover)').matches) {
+    const col = spot.querySelector('.col');
+    let radius = 0, targetR = 0, x = 50, y = 50;
+    let raf = null;
+    const tick = () => {
+      radius += (targetR - radius) * 0.18;
+      col.style.webkitMaskImage = `radial-gradient(circle ${radius}px at ${x}% ${y}%, black 65%, transparent 100%)`;
+      col.style.maskImage      = `radial-gradient(circle ${radius}px at ${x}% ${y}%, black 65%, transparent 100%)`;
+      raf = (Math.abs(targetR - radius) > 0.3) ? requestAnimationFrame(tick) : null;
+    };
+    const drive = () => { if (!raf) raf = requestAnimationFrame(tick); };
+    spot.addEventListener('mousemove', (e) => {
+      const r = spot.getBoundingClientRect();
+      x = ((e.clientX - r.left) / r.width * 100);
+      y = ((e.clientY - r.top) / r.height * 100);
+      targetR = 200; drive();
+    });
+    spot.addEventListener('mouseenter', () => { targetR = 200; drive(); cursor && cursor.classList.add('is-spotlight'); });
+    spot.addEventListener('mouseleave', () => { targetR = 0; drive(); cursor && cursor.classList.remove('is-spotlight'); });
+  }
+
+  // ───── Signature draw
+  const sig = document.getElementById('sig');
+  if (sig) new IntersectionObserver((entries) => entries.forEach(e => e.isIntersecting && sig.classList.add('is-in')), { threshold: .35 }).observe(sig);
+
+  // ───── Full archive: ALL 112 photos in alphabetical order
+  const plateNodes = document.querySelectorAll('[data-lb]');
+  const flatGrid = document.getElementById('flatGrid');
+
+  const ALL_PHOTOS = [
+    'alligator-portrait','bare-tree-stark','bare-trees-mausoleum','bare-winter-trees',
+    'bird-in-grass','birds-in-flight','bluebird-branch','cardinal-fence-alt',
+    'cardinal-on-fence','castle-stormclouds','cat-lying-down','cat-on-path',
+    'cat-portrait-close','cave-rock-texture','chameleon-close','cliff-face-texture',
+    'coastal-rocks','colonnade-lights','concert-stage','countryside-estate',
+    'cracked-earth-pano','cracked-mud','cracked-volcanic-earth','curved-grass-blade',
+    'dahlia-bloom','dandelion-seed','distant-city-lights','distant-headland',
+    'eagle-eye-close','empty-sea-horizon','empty-warehouse-room','eroded-rock-spires',
+    'fence-line-trees','fern-detail','field-road-landscape','fish-silhouette',
+    'flower-bud-close','forest-light','frog-in-grass','frog-on-log',
+    'frog-perched','frozen-shore','full-moon','garden-benches',
+    'grand-oak-field','grasshopper-leaf','grasshopper-on-chair','green-hills-panorama',
+    'green-hillside-trees','hallway-interior','heron-on-rocks','hillside-panorama',
+    'hilltop-castle','interior-living-room','lake-sunset-reflection','leafy-branch-canopy',
+    'lichen-rock','lone-bare-tree','lone-dead-tree-mountain','lone-figure-plain',
+    'manor-garden','milky-way-peaks','minimal-poles-field','minimal-seascape',
+    'minimal-still-water','misty-distant-peaks','misty-foothills','monument-church',
+    'moody-mound-rocks','mountain-range-wide','night-road-traffic','old-barn-winter',
+    'old-brick-windows','pansy-leaf','plant-detail','pool-table-bw',
+    'red-interior-bw','ripple-rings','riverbed-stones','road-sunset-silhouette',
+    'rock-slab-detail','sea-cliff-stack','sea-horizon-mist','shore-pebbles',
+    'shore-rocks','sleeping-dog','small-dog-fluffy','small-dog-tongue',
+    'small-town-street','smokestacks-reflection','spaniel-portrait','spaniel-puppy',
+    'sparrow-branch-1','sparrow-branch-2','sparrow-branch-3','sparrow-branch-4',
+    'spider-on-plank','spider-rail','squirrel-close','squirrel-on-fence',
+    'stadium-arch','still-water-pier','stones-in-water','sunset-clouds-water',
+    'sunset-field','tangled-branches','tree-canopy','water-surface',
+    'wave-foam-rocks','wave-rocks-sunset','wet-fur-portrait','yorkie-portrait'
+  ];
+
+  // Custom titles & meta for the 16 curated chapter plates. Other photos
+  // fall back to a Title-Cased version of their filename.
+  const META = {
+    'lake-sunset-reflection':   { title: 'Lake, at dusk',                meta: 'Field notes', chapter: '01 Land' },
+    'lone-dead-tree-mountain':  { title: 'A tree, holding the mountain', meta: 'Field notes', chapter: '01 Land' },
+    'milky-way-peaks':          { title: 'Above the silence',            meta: 'Field notes', chapter: '01 Land' },
+    'lone-figure-plain':        { title: 'A figure, a plain',            meta: 'Field notes', chapter: '01 Land' },
+    'cracked-mud':              { title: 'Cracked earth',                meta: 'Field notes', chapter: '01 Land' },
+    'misty-distant-peaks':      { title: 'Distant peaks',                meta: 'Field notes', chapter: '01 Land' },
+    'cracked-earth-pano':       { title: 'Earth',                        meta: 'Field notes', chapter: 'Pull moment' },
+    'hillside-panorama':        { title: 'Hillside, wide',               meta: 'Field notes', chapter: 'Cover' },
+    'frog-perched':             { title: 'Frog, perched',                meta: 'Field notes', chapter: '02 Wild' },
+    'cat-on-path':              { title: 'Cat, on the path',             meta: 'Field notes', chapter: '02 Wild' },
+    'sparrow-branch-3':         { title: 'Sparrow, branch',              meta: 'Field notes', chapter: '02 Wild' },
+    'alligator-portrait':       { title: 'Alligator, eye level',         meta: 'Field notes', chapter: '02 Wild' },
+    'yorkie-portrait':          { title: 'Yorkie, close',                meta: 'Field notes', chapter: '02 Wild' },
+    'frog-on-log':              { title: 'Frog, on a log',               meta: 'Field notes', chapter: 'Interlude' },
+    'pool-table-bw':            { title: 'Pool table, late',             meta: 'Field notes', chapter: '03 Form' },
+    'colonnade-lights':         { title: 'Colonnade, lit',               meta: 'Field notes', chapter: '03 Form' },
+    'hallway-interior':         { title: 'A long hallway',               meta: 'Field notes', chapter: '03 Form' },
+    'old-brick-windows':        { title: 'Brick & glass',                meta: 'Field notes', chapter: '03 Form' },
+    'red-interior-bw':          { title: 'Interior, light through',      meta: 'Field notes', chapter: '03 Form' },
+  };
+
+  const toTitle = (s) => s.replace(/-/g, ' ').replace(/\b\w/g, c => c.toUpperCase());
+  const info = (slug) => META[slug] || { title: toTitle(slug), meta: 'Archive', chapter: 'Archive' };
+
+  // The lightbox cycles through ALL 112
+  const plates = ALL_PHOTOS.map(slug => {
+    const m = info(slug);
+    return { src: `photos/mid/${slug}.webp`, title: m.title, loc: m.meta, chapter: m.chapter };
+  });
+
+  // Render the flat-plan index with ALL 112 (lazy-loaded thumbs)
+  ALL_PHOTOS.forEach((slug, i) => {
+    const m = info(slug);
+    const num = String(i + 1).padStart(3, '0');
+    const cell = document.createElement('a');
+    cell.className = 'flat__cell';
+    cell.href = '#';
+    cell.dataset.flatIdx = i;
+    cell.innerHTML = `
+      <div class="flat__row"><strong>${num}</strong><span>${m.chapter}</span></div>
+      <div class="flat__thumb"><img src="photos/thumbs/${slug}.webp" alt="" loading="lazy" decoding="async"></div>
+      <div class="flat__row"><span>${m.title}</span></div>
+    `;
+    flatGrid.appendChild(cell);
+  });
+
+  // Wire every chapter plate to its position in the full 112-photo array,
+  // so clicking a Land/Wild/Form plate opens the lightbox at the right index.
+  plateNodes.forEach((fig) => {
+    const img = fig.querySelector('img');
+    const fname = (img.getAttribute('src') || img.src).split('/').pop().replace(/\.[^.]+$/, '');
+    const idx = ALL_PHOTOS.indexOf(fname);
+    fig.dataset.lbIndex = idx >= 0 ? idx : 0;
+  });
+
+  // ───── Lightbox
+  const lb = document.getElementById('lightbox');
+  const lbImg = document.getElementById('lbImg');
+  const lbNum = document.getElementById('lbNum');
+  const lbTotal = document.getElementById('lbTotal');
+  const lbTitle = document.getElementById('lbTitle');
+  const lbLoc = document.getElementById('lbLoc');
+  const lbChapter = document.getElementById('lbChapter');
+  lbTotal.textContent = plates.length;
+
+  let current = 0;
+  const open = (i) => {
+    if (!plates.length) return;
+    current = ((i % plates.length) + plates.length) % plates.length;
+    const p = plates[current];
+    lbImg.classList.remove('is-ready');
+    const tmp = new Image();
+    tmp.onload = () => { lbImg.src = p.src; lbImg.classList.add('is-ready'); };
+    tmp.onerror = () => { lbImg.src = p.src; lbImg.classList.add('is-ready'); };
+    tmp.src = p.src;
+    lbNum.textContent = String(current + 1).padStart(3, '0');
+    lbTitle.textContent = p.title || '—';
+    lbLoc.textContent = p.loc || '';
+    lbChapter.textContent = p.chapter || '';
+    lb.classList.add('is-open');
+    document.body.classList.add('lb-open');
+    lb.setAttribute('aria-hidden', 'false');
+    [current + 1, current - 1].forEach(k => {
+      const idx = ((k % plates.length) + plates.length) % plates.length;
+      const pre = new Image(); pre.src = plates[idx].src;
+    });
+  };
+  const close = () => { lb.classList.remove('is-open'); document.body.classList.remove('lb-open'); lb.setAttribute('aria-hidden', 'true'); };
+  const next = () => open(current + 1);
+  const prev = () => open(current - 1);
+
+  plateNodes.forEach((fig) => fig.addEventListener('click', (e) => {
+    if (e.target.closest('a')) return;
+    open(parseInt(fig.dataset.lbIndex || '0', 10));
+  }));
+  document.querySelectorAll('.flat__cell').forEach((cell) => cell.addEventListener('click', (e) => {
+    e.preventDefault();
+    open(parseInt(cell.dataset.flatIdx || '0', 10));
+  }));
+
+  document.getElementById('lbClose').addEventListener('click', close);
+  document.getElementById('lbNext').addEventListener('click', (e) => { e.stopPropagation(); next(); });
+  document.getElementById('lbPrev').addEventListener('click', (e) => { e.stopPropagation(); prev(); });
+  lb.addEventListener('click', (e) => { if (e.target === lb || e.target.classList.contains('lightbox__stage')) close(); });
+  document.addEventListener('keydown', (e) => {
+    if (!lb.classList.contains('is-open')) return;
+    if (e.key === 'Escape') close();
+    else if (e.key === 'ArrowRight') next();
+    else if (e.key === 'ArrowLeft') prev();
+  });
+
+  let tx = null;
+  lb.addEventListener('touchstart', (e) => { tx = e.changedTouches[0].clientX; }, { passive: true });
+  lb.addEventListener('touchend', (e) => {
+    if (tx === null) return;
+    const dx = e.changedTouches[0].clientX - tx;
+    if (Math.abs(dx) > 50) { dx > 0 ? prev() : next(); }
+    tx = null;
+  }, { passive: true });
+})();
+</script>
+</body>
+</html>
