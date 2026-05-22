@@ -4,7 +4,7 @@
 <meta charset="utf-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
 <title>Dudas — Photographs</title>
-<meta name="description" content="Photographs by David Dudas. Landscapes, wildlife, architecture. Selected works." />
+<meta name="description" content="Photographs by David Dudas. Landscapes, wildlife, architecture, and virtual worlds. Selected works." />
 <meta name="theme-color" content="#0a0a0a" />
 <link rel="icon" type="image/png" href="apple-touch-icon.png" />
 <link rel="apple-touch-icon" href="apple-touch-icon.png" />
@@ -137,8 +137,23 @@
   .mast a { position: relative; padding: 4px 0; }
   .mast a::after { content:""; position:absolute; left:0; bottom:0; height:1px; width:100%; background: currentColor; transform: scaleX(0); transform-origin: right; transition: transform .55s cubic-bezier(.2,.7,.2,1); }
   .mast a:hover::after { transform: scaleX(1); transform-origin: left; }
-  .mast__brand { font-family: var(--display); font-variation-settings: "wght" 600, "opsz" 18; font-size: 16px; letter-spacing: -.005em; }
+  .mast__brand { font-family: var(--display); font-variation-settings: "wght" 600, "opsz" 18; font-size: 16px; letter-spacing: -.005em; padding: 0 14px; }
   .mast__brand .a { color: var(--accent); }
+  /* Mobile: tighten so chips don't crowd the brand */
+  @media (max-width: 820px) {
+    .mast { padding: 18px 20px; }
+    .mast__l, .mast__r { gap: 12px; font-size: 9px; letter-spacing: .22em; }
+    .mast__brand { font-size: 14px; padding: 0 8px; }
+  }
+  @media (max-width: 620px) {
+    .mast { grid-template-columns: 1fr auto; padding: 16px 18px; }
+    .mast__l { display: none; }
+    .mast__brand { padding: 0; }
+    .mast__r { font-size: 9px; gap: 14px; }
+  }
+  @media (max-width: 380px) {
+    .mast__r .mr-hide { display: none; }
+  }
 
   /* ───────── HERO — full-bleed photo, slow zoom, title overlaid ───────── */
   .hero {
@@ -414,6 +429,35 @@
     .ed-row, .ed-row.alt { grid-template-columns: 1fr; direction: ltr; }
   }
 
+  /* ───────── 04 GAMES — cinema-grid ───────── */
+  .games .g1  { grid-column: 1 / -1; }                              .games .g1 .plate__img  { aspect-ratio: 21 / 9; }
+  .games .g2  { grid-column: 1 / span 6; margin-top: 4vw; }          .games .g2 .plate__img  { aspect-ratio: 3 / 4; }
+  .games .g3  { grid-column: 7 / span 6; margin-top: 4vw; }          .games .g3 .plate__img  { aspect-ratio: 3 / 4; }
+  .games .g4  { grid-column: 1 / -1; margin-top: 3vw; }              .games .g4 .plate__img  { aspect-ratio: 16 / 9; }
+  .games .g-dip { grid-column: 1 / -1; display: grid; grid-template-columns: 1fr 1fr; gap: var(--gap); margin-top: 3vw; }
+  .games .g-dip .plate__img { aspect-ratio: 1 / 1; }
+  .games .g7  { grid-column: 1 / span 7; margin-top: 4vw; }          .games .g7 .plate__img  { aspect-ratio: 16 / 9; }
+  .games .g8  { grid-column: 8 / span 5; margin-top: 4vw; align-self: end; }  .games .g8 .plate__img { aspect-ratio: 4 / 5; }
+  @media (max-width: 820px) {
+    .games .g1, .games .g2, .games .g3, .games .g4, .games .g7, .games .g8 { grid-column: 1 / -1; margin-top: 0; }
+    .games .g-dip { grid-template-columns: 1fr; }
+  }
+
+  /* Pull moment v2 (Worlds) reuses .pull but text variant */
+  .pull--worlds .pull__cap .pull__place { color: var(--paper); }
+
+  /* ───────── Load more (Index) ───────── */
+  .flat__more {
+    margin: clamp(50px, 7vw, 90px) auto 0; display: block;
+    padding: 16px 38px; border: 1px solid var(--rule);
+    background: transparent; color: var(--ink); cursor: pointer;
+    font-family: var(--sans); font-size: 10.5px; letter-spacing: .3em; text-transform: uppercase;
+    transition: border-color .5s, color .5s, background .5s, letter-spacing .5s;
+  }
+  .flat__more:hover { border-color: var(--accent); color: var(--accent); letter-spacing: .35em; }
+  .flat__more em { font-family: var(--display); font-style: normal; font-variation-settings: "wght" 700, "opsz" 24; color: var(--accent); font-size: 12px; letter-spacing: 0; text-transform: none; padding: 0 6px; }
+  .flat__more.is-done { display: none; }
+
   /* ───────── Stat strip ───────── */
   .stats { padding: clamp(60px, 8vw, 120px) var(--pad-x); border-top: 1px solid var(--rule); }
   .stats__row { display: grid; grid-template-columns: repeat(4, 1fr); gap: var(--gap); }
@@ -614,11 +658,12 @@
     <a href="#land" data-hover>01 Land</a>
     <a href="#wild" data-hover>02 Wild</a>
     <a href="#form" data-hover>03 Form</a>
+    <a href="#games" data-hover>04 Games</a>
   </div>
   <a href="#" class="mast__brand">Dudas<span class="a">.</span></a>
   <div class="mast__r">
     <a href="#index" data-hover>Index</a>
-    <a href="#contact" data-hover>Contact</a>
+    <a href="#contact" data-hover class="mr-hide">Contact</a>
   </div>
 </header>
 
@@ -640,11 +685,11 @@
       <span class="l1"><span>Photographs</span></span>
       <span class="l2"><span>by <em>Dudas</em><span class="dot">.</span></span></span>
     </h1>
-    <p class="hero__sub">Land, weather, and wild things.</p>
+    <p class="hero__sub">Land, weather, wild things — and virtual worlds.</p>
   </div>
 
   <div class="hero__bot">
-    <div class="l">Three chapters <span class="dash"></span> 112 plates</div>
+    <div class="l">Four chapters <span class="dash"></span> 249 plates</div>
     <div class="c">By David Dudas</div>
     <div class="r"><span class="hero__scroll">Scroll</span></div>
   </div>
@@ -653,10 +698,10 @@
 <!-- ───────── Marquee ───────── -->
 <div class="marquee" aria-hidden="true">
   <div class="marquee__track">
-    <span>Land</span><span class="it">&amp;</span><span>Wild</span><span class="it">&amp;</span><span>Form</span><span class="it">·</span>
-    <span>Land</span><span class="it">&amp;</span><span>Wild</span><span class="it">&amp;</span><span>Form</span><span class="it">·</span>
-    <span>Land</span><span class="it">&amp;</span><span>Wild</span><span class="it">&amp;</span><span>Form</span><span class="it">·</span>
-    <span>Land</span><span class="it">&amp;</span><span>Wild</span><span class="it">&amp;</span><span>Form</span><span class="it">·</span>
+    <span>Land</span><span class="it">&amp;</span><span>Wild</span><span class="it">&amp;</span><span>Form</span><span class="it">&amp;</span><span>Game</span><span class="it">·</span>
+    <span>Land</span><span class="it">&amp;</span><span>Wild</span><span class="it">&amp;</span><span>Form</span><span class="it">&amp;</span><span>Game</span><span class="it">·</span>
+    <span>Land</span><span class="it">&amp;</span><span>Wild</span><span class="it">&amp;</span><span>Form</span><span class="it">&amp;</span><span>Game</span><span class="it">·</span>
+    <span>Land</span><span class="it">&amp;</span><span>Wild</span><span class="it">&amp;</span><span>Form</span><span class="it">&amp;</span><span>Game</span><span class="it">·</span>
   </div>
 </div>
 
@@ -831,12 +876,71 @@
   </div>
 </section>
 
+<!-- ───────── 04 GAMES ───────── -->
+<section class="sec games" id="games">
+  <header class="sec__head">
+    <div class="sec__num reveal">04</div>
+    <h2 class="sec__title reveal d1">Game<span class="it">scapes.</span></h2>
+    <div class="sec__meta reveal d2">8 plates<br/>Virtual worlds</div>
+  </header>
+
+  <div class="grid">
+    <figure class="plate g1 reveal" data-lb data-title="Coupe, mountain pass" data-loc="Driveclub" data-chapter="04 Games">
+      <div class="plate__img"><img loading="lazy" decoding="async" src="photos/mid/driveclub-coupe-snow-pass.webp" alt="A coupe on a snowy mountain pass"></div>
+      <figcaption class="plate__cap"><span class="plate__num">No. 19</span><span class="plate__title">Coupe, mountain pass</span><span class="plate__meta">Driveclub</span></figcaption>
+    </figure>
+
+    <figure class="plate g2 reveal" data-lb data-title="Grayson, in shadow" data-loc="The Order: 1886" data-chapter="04 Games">
+      <div class="plate__img"><img loading="lazy" decoding="async" src="photos/mid/order-grayson-shadow.webp" alt="Grayson portrait, high contrast"></div>
+      <figcaption class="plate__cap"><span class="plate__num">No. 20</span><span class="plate__title">Grayson, in shadow</span><span class="plate__meta">The Order: 1886</span></figcaption>
+    </figure>
+    <figure class="plate g3 reveal d1" data-lb data-title="Drake, by the window" data-loc="Uncharted 4" data-chapter="04 Games">
+      <div class="plate__img"><img loading="lazy" decoding="async" src="photos/mid/uncharted-drake-window.webp" alt="Drake portrait by the window"></div>
+      <figcaption class="plate__cap"><span class="plate__num">No. 21</span><span class="plate__title">Drake, by the window</span><span class="plate__meta">Uncharted 4</span></figcaption>
+    </figure>
+
+    <figure class="plate g4 reveal" data-lb data-title="Temple, distant" data-loc="Uncharted 4" data-chapter="04 Games">
+      <div class="plate__img"><img loading="lazy" decoding="async" src="photos/mid/uncharted-mountain-temple.webp" alt="Distant mountain temple"></div>
+      <figcaption class="plate__cap"><span class="plate__num">No. 22</span><span class="plate__title">Temple, distant</span><span class="plate__meta">Uncharted 4</span></figcaption>
+    </figure>
+
+    <div class="g-dip">
+      <figure class="plate reveal" data-lb data-title="Warlord" data-loc="Shadow of Mordor" data-chapter="04 Games">
+        <div class="plate__img"><img loading="lazy" decoding="async" src="photos/mid/mordor-warlord-orc.webp" alt="An orc warlord portrait"></div>
+        <figcaption class="plate__cap"><span class="plate__num">No. 23</span><span class="plate__title">Warlord</span><span class="plate__meta">Shadow of Mordor</span></figcaption>
+      </figure>
+      <figure class="plate reveal d1" data-lb data-title="Kratos" data-loc="God of War III" data-chapter="04 Games">
+        <div class="plate__img"><img loading="lazy" decoding="async" src="photos/mid/godofwar-kratos-portrait.webp" alt="Kratos high-contrast portrait"></div>
+        <figcaption class="plate__cap"><span class="plate__num">No. 24</span><span class="plate__title">Kratos</span><span class="plate__meta">God of War III</span></figcaption>
+      </figure>
+    </div>
+
+    <figure class="plate g7 reveal" data-lb data-title="The library" data-loc="Uncharted 4" data-chapter="04 Games">
+      <div class="plate__img"><img loading="lazy" decoding="async" src="photos/mid/uncharted-mansion-library.webp" alt="A grand library, dim and quiet"></div>
+      <figcaption class="plate__cap"><span class="plate__num">No. 25</span><span class="plate__title">The library</span><span class="plate__meta">Uncharted 4</span></figcaption>
+    </figure>
+    <figure class="plate g8 reveal d1" data-lb data-title="Port, at dusk" data-loc="Uncharted 4" data-chapter="04 Games">
+      <div class="plate__img"><img loading="lazy" decoding="async" src="photos/mid/uncharted-port-overlook.webp" alt="A colonial port at dusk"></div>
+      <figcaption class="plate__cap"><span class="plate__num">No. 26</span><span class="plate__title">Port, at dusk</span><span class="plate__meta">Uncharted 4</span></figcaption>
+    </figure>
+  </div>
+</section>
+
+<!-- ───────── PULL moment 2 — Worlds ───────── -->
+<div class="pull pull--worlds">
+  <img loading="lazy" decoding="async" src="photos/mid/uncharted-cliff-castle.webp" alt="A ruined castle on a cliff">
+  <div class="pull__cap">
+    <div class="pull__place">Worlds<span class="a">.</span></div>
+    <div class="pull__meta">Plate · No. 27<strong>Rendered</strong></div>
+  </div>
+</div>
+
 <!-- ───────── Stat strip ───────── -->
 <section class="stats">
   <div class="stats__row">
-    <div class="stats__cell reveal"><div class="stats__num">112<span class="a">.</span></div><div class="stats__label">Plates in archive</div></div>
-    <div class="stats__cell reveal d1"><div class="stats__num">16<span class="a">.</span></div><div class="stats__label">Selected</div></div>
-    <div class="stats__cell reveal d2"><div class="stats__num">03<span class="a">.</span></div><div class="stats__label">Chapters</div></div>
+    <div class="stats__cell reveal"><div class="stats__num">249<span class="a">.</span></div><div class="stats__label">Plates in archive</div></div>
+    <div class="stats__cell reveal d1"><div class="stats__num">27<span class="a">.</span></div><div class="stats__label">Selected</div></div>
+    <div class="stats__cell reveal d2"><div class="stats__num">04<span class="a">.</span></div><div class="stats__label">Chapters</div></div>
     <div class="stats__cell reveal d3"><div class="stats__num">01<span class="a">.</span></div><div class="stats__label">Camera, mostly</div></div>
   </div>
 </section>
@@ -846,9 +950,10 @@
   <header class="flat__head">
     <span>Index</span>
     <h3 class="flat__title">All<span class="it"> plates.</span></h3>
-    <span>001 — 112</span>
+    <span>001 — 249</span>
   </header>
   <div class="flat__grid" id="flatGrid"></div>
+  <button class="flat__more" id="flatMore" type="button" data-hover>Load more<em>·</em><span id="flatLeft">209</span> remaining</button>
 </section>
 
 <!-- ───────── Contact ───────── -->
@@ -900,7 +1005,7 @@
 <!-- ───────── Lightbox ───────── -->
 <div class="lightbox" id="lightbox" aria-hidden="true" role="dialog" aria-modal="true">
   <div class="lightbox__topbar">
-    <div class="lightbox__count">Plate <em id="lbNum">001</em><span class="dim">⁄ <span id="lbTotal">112</span></span></div>
+    <div class="lightbox__count">Plate <em id="lbNum">001</em><span class="dim">⁄ <span id="lbTotal">249</span></span></div>
     <div class="lightbox__mark">Dudas<span class="a">.</span></div>
     <button class="lightbox__close" id="lbClose" aria-label="Close">×</button>
   </div>
@@ -1042,34 +1147,69 @@
   const flatGrid = document.getElementById('flatGrid');
 
   const ALL_PHOTOS = [
-    'alligator-portrait','bare-tree-stark','bare-trees-mausoleum','bare-winter-trees',
-    'bird-in-grass','birds-in-flight','bluebird-branch','cardinal-fence-alt',
-    'cardinal-on-fence','castle-stormclouds','cat-lying-down','cat-on-path',
-    'cat-portrait-close','cave-rock-texture','chameleon-close','cliff-face-texture',
-    'coastal-rocks','colonnade-lights','concert-stage','countryside-estate',
-    'cracked-earth-pano','cracked-mud','cracked-volcanic-earth','curved-grass-blade',
-    'dahlia-bloom','dandelion-seed','distant-city-lights','distant-headland',
-    'eagle-eye-close','empty-sea-horizon','empty-warehouse-room','eroded-rock-spires',
+    'alligator-portrait','ant-close','bare-tree-stark','bare-trees-mausoleum',
+    'bare-winter-trees','bird-in-grass','birds-in-flight','bluebird-branch',
+    'cardinal-fence-alt','cardinal-on-fence','castle-stormclouds','cat-lying-down',
+    'cat-on-path','cat-portrait-close','cave-rock-texture','chameleon-close',
+    'cliff-face-texture','coastal-rocks','colonnade-lights','concert-stage',
+    'countryside-estate','cracked-earth-pano','cracked-mud','cracked-volcanic-earth',
+    'curved-grass-blade','dahlia-bloom','dandelion-seed','distant-city-lights',
+    'distant-headland','driveclub-arctic-vista','driveclub-audi-overlook','driveclub-audi-tunnel',
+    'driveclub-aurora-night','driveclub-canyon-river','driveclub-coast-ship','driveclub-coupe-snow-pass',
+    'driveclub-ferrari-curve','driveclub-ferrari-spray','driveclub-m4-stormy-track','driveclub-milky-way-coupe',
+    'driveclub-powerlines-track','driveclub-snow-valley-bridge','eagle-eye-close','empty-sea-horizon',
+    'empty-warehouse-room','eroded-rock-spires','farcry-empty-house','farcry-grass-hat',
+    'farcry-mountain-bridge','farcry-portrait-girl','farcry-temple-shrine','farcry-tiger-altar',
     'fence-line-trees','fern-detail','field-road-landscape','fish-silhouette',
     'flower-bud-close','forest-light','frog-in-grass','frog-on-log',
     'frog-perched','frozen-shore','full-moon','garden-benches',
-    'grand-oak-field','grasshopper-leaf','grasshopper-on-chair','green-hills-panorama',
-    'green-hillside-trees','hallway-interior','heron-on-rocks','hillside-panorama',
-    'hilltop-castle','interior-living-room','lake-sunset-reflection','leafy-branch-canopy',
-    'lichen-rock','lone-bare-tree','lone-dead-tree-mountain','lone-figure-plain',
-    'manor-garden','milky-way-peaks','minimal-poles-field','minimal-seascape',
-    'minimal-still-water','misty-distant-peaks','misty-foothills','monument-church',
-    'moody-mound-rocks','mountain-range-wide','night-road-traffic','old-barn-winter',
-    'old-brick-windows','pansy-leaf','plant-detail','pool-table-bw',
-    'red-interior-bw','ripple-rings','riverbed-stones','road-sunset-silhouette',
-    'rock-slab-detail','sea-cliff-stack','sea-horizon-mist','shore-pebbles',
-    'shore-rocks','sleeping-dog','small-dog-fluffy','small-dog-tongue',
-    'small-town-street','smokestacks-reflection','spaniel-portrait','spaniel-puppy',
-    'sparrow-branch-1','sparrow-branch-2','sparrow-branch-3','sparrow-branch-4',
-    'spider-on-plank','spider-rail','squirrel-close','squirrel-on-fence',
-    'stadium-arch','still-water-pier','stones-in-water','sunset-clouds-water',
-    'sunset-field','tangled-branches','tree-canopy','water-surface',
-    'wave-foam-rocks','wave-rocks-sunset','wet-fur-portrait','yorkie-portrait'
+    'godofwar-kratos-portrait','godofwar-warrior-armor','godofwar-zeus-statue','grand-oak-field',
+    'grasshopper-leaf','grasshopper-on-chair','green-hills-panorama','green-hillside-trees',
+    'hallway-interior','heron-on-rocks','hillside-panorama','hilltop-castle',
+    'interior-living-room','lake-sunset-reflection','leafy-branch-canopy','lichen-rock',
+    'lone-bare-tree','lone-dead-tree-mountain','lone-figure-plain','manor-garden',
+    'milky-way-peaks','minimal-poles-field','minimal-seascape','minimal-still-water',
+    'misty-distant-peaks','misty-foothills','monument-church','moody-mound-rocks',
+    'mordor-orc-summon','mordor-ranger-cloak','mordor-running-mist','mordor-snow-flight',
+    'mordor-talion-portrait','mordor-warlord-orc','mountain-range-wide','night-road-traffic',
+    'old-barn-winter','old-brick-windows','order-alley-night','order-arch-tunnel',
+    'order-bridge-night','order-coffin-room','order-elevator-grab','order-entry-doorway',
+    'order-fallen-room','order-grayson-shadow','order-grayson-side','order-igraine-pistol',
+    'order-rifle-rack','order-skylight-hall','order-vintage-bedroom','pansy-leaf',
+    'plant-detail','pool-table-bw','red-interior-bw','ripple-rings',
+    'riverbed-stones','road-sunset-silhouette','rock-slab-detail','roosters-pen',
+    'sea-cliff-stack','sea-horizon-mist','shore-pebbles','shore-rocks',
+    'sleeping-dog','small-dog-fluffy','small-dog-tongue','small-town-street',
+    'smokestacks-reflection','spaniel-portrait','spaniel-puppy','sparrow-branch-1',
+    'sparrow-branch-2','sparrow-branch-3','sparrow-branch-4','spider-on-plank',
+    'spider-rail','squirrel-on-fence','stadium-arch','still-water-pier',
+    'stones-in-water','sunset-clouds-water','sunset-field','tangled-branches',
+    'tombraider-lara-portrait','tree-canopy','uncharted-alley-figure','uncharted-alley-lamp',
+    'uncharted-arched-balcony','uncharted-attic-storage','uncharted-balcony-mountain','uncharted-barn-sunbeam',
+    'uncharted-bay-village','uncharted-bayou-foliage','uncharted-boat-adrift','uncharted-boat-on-cliff',
+    'uncharted-boat-storm','uncharted-boiler-room','uncharted-bunkhouse','uncharted-canyon-night',
+    'uncharted-cave-cavern','uncharted-cell-bars','uncharted-cell-rubble','uncharted-cellar-arches',
+    'uncharted-cellar-barrels','uncharted-cellar-passage','uncharted-cellar-stairs','uncharted-cliff-castle',
+    'uncharted-clifftop-ruin','uncharted-clifftop-village','uncharted-clocktower-night','uncharted-clocktower-view',
+    'uncharted-cobble-street','uncharted-colonial-arcade','uncharted-colonial-arches','uncharted-colonial-cellar',
+    'uncharted-colonial-doorway','uncharted-colonial-rooftops','uncharted-construction-night','uncharted-corridor-end',
+    'uncharted-dark-doors','uncharted-dim-room-table','uncharted-dim-storage','uncharted-distant-flares',
+    'uncharted-drake-window','uncharted-empty-office','uncharted-fish-school','uncharted-jungle-fronds',
+    'uncharted-lighthouse-rain','uncharted-living-room-lit','uncharted-living-room-night','uncharted-lone-island',
+    'uncharted-manor-fountain','uncharted-manor-pool','uncharted-manor-walkway','uncharted-manor-window',
+    'uncharted-mansion-hill','uncharted-mansion-interior','uncharted-mansion-library','uncharted-mansion-study',
+    'uncharted-moonlight-shrine','uncharted-moonrise-rocks','uncharted-mountain-overlook','uncharted-mountain-temple',
+    'uncharted-movie-theatre','uncharted-office-desk','uncharted-office-shelves','uncharted-office-wall',
+    'uncharted-port-overlook','uncharted-prison-alley','uncharted-prison-bunk','uncharted-prison-corridor',
+    'uncharted-prison-couch','uncharted-prison-doorway','uncharted-prison-fire','uncharted-prison-hall',
+    'uncharted-prison-kitchen','uncharted-prison-light','uncharted-prison-office','uncharted-prison-stairs',
+    'uncharted-prison-yard','uncharted-rocky-isle','uncharted-rooftop-view','uncharted-rotunda-floor',
+    'uncharted-rotunda-vault','uncharted-ruined-castle','uncharted-shore-cliffs','uncharted-skull-ruin',
+    'uncharted-stage-puppets','uncharted-underwater-relic','uncharted-underwater-wreck','uncharted-upstairs-landing',
+    'uncharted-vault-archway','uncharted-village-clocktower','uncharted-village-hilltop','uncharted-village-mist',
+    'uncharted-village-rooftops','uncharted-village-staircase','uncharted-warehouse-barrels','uncharted-wine-cellar',
+    'water-surface','wave-foam-rocks','wave-rocks-sunset','wet-fur-portrait',
+    'yorkie-portrait'
   ];
 
   // Custom titles & meta for the 16 curated chapter plates. Other photos
@@ -1094,6 +1234,15 @@
     'hallway-interior':         { title: 'A long hallway',               meta: 'Field notes', chapter: '03 Form' },
     'old-brick-windows':        { title: 'Brick & glass',                meta: 'Field notes', chapter: '03 Form' },
     'red-interior-bw':          { title: 'Interior, light through',      meta: 'Field notes', chapter: '03 Form' },
+    'driveclub-coupe-snow-pass':{ title: 'Coupe, mountain pass',          meta: 'Driveclub',         chapter: '04 Games' },
+    'order-grayson-shadow':     { title: 'Grayson, in shadow',            meta: 'The Order: 1886',   chapter: '04 Games' },
+    'uncharted-drake-window':   { title: 'Drake, by the window',          meta: 'Uncharted 4',       chapter: '04 Games' },
+    'uncharted-mountain-temple':{ title: 'Temple, distant',               meta: 'Uncharted 4',       chapter: '04 Games' },
+    'mordor-warlord-orc':       { title: 'Warlord',                       meta: 'Shadow of Mordor',  chapter: '04 Games' },
+    'godofwar-kratos-portrait': { title: 'Kratos',                        meta: 'God of War III',    chapter: '04 Games' },
+    'uncharted-mansion-library':{ title: 'The library',                   meta: 'Uncharted 4',       chapter: '04 Games' },
+    'uncharted-port-overlook':  { title: 'Port, at dusk',                 meta: 'Uncharted 4',       chapter: '04 Games' },
+    'uncharted-cliff-castle':   { title: 'Worlds',                        meta: 'Uncharted 4',       chapter: 'Pull moment' },
   };
 
   const toTitle = (s) => s.replace(/-/g, ' ').replace(/\b\w/g, c => c.toUpperCase());
@@ -1105,21 +1254,48 @@
     return { src: `photos/mid/${slug}.webp`, title: m.title, loc: m.meta, chapter: m.chapter };
   });
 
-  // Render the flat-plan index with ALL 112 (lazy-loaded thumbs)
-  ALL_PHOTOS.forEach((slug, i) => {
-    const m = info(slug);
-    const num = String(i + 1).padStart(3, '0');
-    const cell = document.createElement('a');
-    cell.className = 'flat__cell';
-    cell.href = '#';
-    cell.dataset.flatIdx = i;
-    cell.innerHTML = `
-      <div class="flat__row"><strong>${num}</strong><span>${m.chapter}</span></div>
-      <div class="flat__thumb"><img src="photos/thumbs/${slug}.webp" alt="" loading="lazy" decoding="async"></div>
-      <div class="flat__row"><span>${m.title}</span></div>
-    `;
-    flatGrid.appendChild(cell);
-  });
+  // Render the flat-plan index in pages (Load more reveals next batch)
+  const PAGE = 40;
+  let shown = 0;
+  const moreBtn = document.getElementById('flatMore');
+  const leftEl  = document.getElementById('flatLeft');
+  const renderPage = () => {
+    const slice = ALL_PHOTOS.slice(shown, shown + PAGE);
+    slice.forEach((slug, k) => {
+      const i = shown + k;
+      const m = info(slug);
+      const num = String(i + 1).padStart(3, '0');
+      const cell = document.createElement('a');
+      cell.className = 'flat__cell';
+      cell.href = '#';
+      cell.dataset.flatIdx = i;
+      cell.innerHTML = `
+        <div class="flat__row"><strong>${num}</strong><span>${m.chapter}</span></div>
+        <div class="flat__thumb"><img src="photos/thumbs/${slug}.webp" alt="" loading="lazy" decoding="async"></div>
+        <div class="flat__row"><span>${m.title}</span></div>
+      `;
+      // Wire click here so newly-added cells also work.
+      cell.addEventListener('click', (e) => { e.preventDefault(); open(parseInt(cell.dataset.flatIdx || '0', 10)); });
+      // Custom-cursor hover (was attached once at boot; cells are added dynamically here)
+      if (window.matchMedia && matchMedia('(hover:hover)').matches) {
+        const c = document.querySelector('.cursor');
+        if (c) {
+          cell.addEventListener('mouseenter', () => c.classList.add('is-hover-img'));
+          cell.addEventListener('mouseleave', () => c.classList.remove('is-hover-img'));
+        }
+      }
+      flatGrid.appendChild(cell);
+    });
+    shown += slice.length;
+    const left = ALL_PHOTOS.length - shown;
+    if (left <= 0) {
+      moreBtn.classList.add('is-done');
+    } else {
+      leftEl.textContent = left;
+    }
+  };
+  renderPage();
+  if (moreBtn) moreBtn.addEventListener('click', renderPage);
 
   // Wire every chapter plate to its position in the full 112-photo array,
   // so clicking a Land/Wild/Form plate opens the lightbox at the right index.
@@ -1170,11 +1346,6 @@
     if (e.target.closest('a')) return;
     open(parseInt(fig.dataset.lbIndex || '0', 10));
   }));
-  document.querySelectorAll('.flat__cell').forEach((cell) => cell.addEventListener('click', (e) => {
-    e.preventDefault();
-    open(parseInt(cell.dataset.flatIdx || '0', 10));
-  }));
-
   document.getElementById('lbClose').addEventListener('click', close);
   document.getElementById('lbNext').addEventListener('click', (e) => { e.stopPropagation(); next(); });
   document.getElementById('lbPrev').addEventListener('click', (e) => { e.stopPropagation(); prev(); });
